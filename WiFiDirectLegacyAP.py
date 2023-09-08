@@ -1,37 +1,154 @@
 #!/usr/bin/env python
 """
+Port to Python of
+
+https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/WiFiDirectLegacyAP
+
+https://download.microsoft.com/download/7/8/7/787469FC-99B4-4726-9932-945111BDC809/WiFiDirectLegacyAPDemo_v1.0.zip
+
+## Other ports
+
+https://github.com/gerfen/WiFiDirectLegacyAPCSharp
+https://github.com/zig13/WifiDirectLegacySurplex
+https://github.com/spieglt/wifidirect-legacy-ap
+https://github.com/govert/WiFiDirectLegacyAPDemo
+
+
+## PyWinRt / python winsdk
+
+https://github.com/pywinrt/python-winsdk/blob/main/pywinrt/winsdk/src/_winrt.cpp
+https://github.com/pywinrt/python-winsdk
+
+## pythonnet
+
+https://pythonnet.github.io/pythonnet/python.html
+
+## rotypes
+
+https://github.com/ArknightsAutoHelper/ArknightsAutoHelper/tree/master/rotypes
+
+## comtypes
+
+https://github.com/enthought/comtypes
+https://pythonhosted.org/comtypes/
+https://pythonhosted.org/comtypes/server.html
+https://github.com/shanewholloway/comtypes
+https://svn.python.org/projects/ctypes/tags/comtypes-0.3.2/docs/com_interfaces.html
+https://gist.github.com/olafhartong/980e9cd51925ff06a5a3fdfb24fb96c2 list of clsids
+
+## ctypes
+
+https://github.com/python/cpython/blob/main/Lib/ctypes/wintypes.py
+https://docs.python.org/2.7/library/ctypes.html
+https://stackoverflow.com/questions/53311519/python-3-7-passing-parameters-to-dll-using-ctypes
+
+## comtypes examples
+
+https://stackoverflow.com/questions/57149456/how-to-implement-windows-10-ivirtualdesktopmanager-interface-in-python
+https://github.com/DanEdens/Virtual_Desktops_Plugin/blob/master/Virtualdesktops/__int__.py
+https://stackoverflow.com/questions/48986244/access-com-methods-from-python
+https://github.com/Qirky/PyKinectTk/blob/master/PyKinectTk/utils/PyKinect2/PyKinectV2.py
+
+
+## winrt/winsdk reference/sources
+
+https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/inspectable.idl
+https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/roapi.h#L237
+https://raw.githubusercontent.com/tpn/winsdk-10/master/Include/10.0.16299.0/winrt/windows.foundation.h
+
+https://learn.microsoft.com/en-us/cpp/cppcx/wrl/how-to-activate-and-use-a-windows-runtime-component-using-wrl?view=msvc-170
+
+https://stackoverflow.com/questions/16466641/how-to-declare-and-link-to-roinitialize-rouninitialize-rogetactivationfactory-an
+https://stackoverflow.com/questions/71607881/using-wrl-to-access-winrt-where-do-you-find-the-right-names-to-use-for-the-clas
+https://stackoverflow.com/questions/71595142/using-wrl-to-access-winrt-i-cannot-get-activateinstance-to-work
+
+https://learn.microsoft.com/en-us/windows/win32/api/roapi/nf-roapi-rogetactivationfactory
+https://learn.microsoft.com/en-us/windows/win32/api/roapi/nf-roapi-roactivateinstance
+https://learn.microsoft.com/en-gb/cpp/cppcx/wrl/hstring-class?view=msvc-170&viewFallbackFrom=vs-2017
+https://learn.microsoft.com/en-us/uwp/cpp-ref-for-winrt/hstring
+https://learn.microsoft.com/en-us/windows/win32/api/winstring/nf-winstring-windowscreatestring
+https://learn.microsoft.com/en-us/windows/win32/winrt/hstring
+
+## winrt metadata
+
+### winmd files
+
+https://stackoverflow.com/questions/54375771/how-to-read-a-winmd-winrt-metadata-file
+https://github.com/microsoft/winmd/tree/master
+https://learn.microsoft.com/en-us/windows/win32/api/rometadataresolution/nf-rometadataresolution-rogetmetadatafile
+
+### idl files
+
+Some idl are missing from winrt (windows.foundation.collections.idl), mingw seems to have all of them
+    pacman -S mingw-w64-i686-headers-git
+
+https://packages.msys2.org/package/mingw-w64-i686-headers-git?repo=mingw32
+https://github.com/MicrosoftDocs/winrt-related/blob/docs/winrt-related-src/midl-3/synthesizing-interfaces.md
+
+## winrt wifidirect
+
+https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.h
+https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.idl
+
+https://learn.microsoft.com/en-us/windows/win32/nativewifi/using-the-wi-fi-direct-api
+https://github.com/microsoft/Windows-universal-samples/tree/main/Samples/WiFiDirect/cpp
+https://github.com/Microsoft/Windows-universal-samples/tree/main/Samples/WiFiDirectServices
+https://learn.microsoft.com/en-us/samples/microsoft/windows-universal-samples/wifidirect/
+https://learn.microsoft.com/en-us/uwp/api/windows.devices.wifidirect.wifidirectlegacysettings?view=winrt-22621
+
+## Uncategorized links
 
 https://stackoverflow.com/questions/8043924/windows-wlanapi-and-python-ctypes
 https://learn.microsoft.com/en-us/windows/win32/api/wlanapi/nf-wlanapi-wlanenuminterfaces
-https://github.com/microsoft/windows-classic-samples/tree/main/Samples/WiFiDirectLegacyAP
-https://github.com/gerfen/WiFiDirectLegacyAPCSharp
 https://github.com/microsoft/Windows-classic-samples/issues/82
-https://github.com/govert/WiFiDirectLegacyAPDemo
-https://github.com/zig13/WifiDirectLegacySurplex/tree/main
-https://learn.microsoft.com/en-us/samples/microsoft/windows-universal-samples/wifidirect/
 https://learn.microsoft.com/en-us/windows-hardware/drivers/partnerapps/wi-fi-direct
-https://download.microsoft.com/download/7/8/7/787469FC-99B4-4726-9932-945111BDC809/WiFiDirectLegacyAPDemo_v1.0.zip
-
 
 https://stackoverflow.com/questions/40286987/discover-wifi-direct-services-windows-android
-https://github.com/Microsoft/Windows-universal-samples/tree/main/Samples/WiFiDirectServices
-https://github.com/Microsoft/Windows-universal-samples/tree/main/Samples/WiFiDirect
-
 
 https://gist.github.com/lala7573/3f7a209195f4d1e45747
 
+## Procedure to manually translate interfaces from midl/C++ to comtypes
 
+1. Get the line from 
 
-https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.h
-https://github.com/pywinrt/python-winsdk/blob/main/pywinrt/winsdk/windows/devices/wifidirect/services/__init__.pyi
-https://stackoverflow.com/questions/48986244/access-com-methods-from-python
-https://stackoverflow.com/questions/57149456/how-to-implement-windows-10-ivirtualdesktopmanager-interface-in-python
+        https://github.com/microsoft/Windows-classic-samples/blob/main/Samples/WiFiDirectLegacyAP/cpp/WlanHostedNetworkWinRT.cpp
+
+    eg 
+            Microsoft::WRL::ComPtr<ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisher> _publisher;
+        hr = Windows::Foundation::ActivateInstance(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectAdvertisementPublisher).Get(), &_publisher);
+
+1. Get the GUID and interface definition from 
+
+    https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.idl
+
+        [contract(Windows.Foundation.UniversalApiContract, 1.0)]
+        [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher)]
+        [uuid(B35A2D1A-9B1F-45D9-925A-694D66DF68EF)]
+        interface IWiFiDirectAdvertisementPublisher : IInspectable
+        {
+            [propget] HRESULT Advertisement([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisement** value);
+            [propget] HRESULT Status([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatus* value);
+            [eventadd] HRESULT StatusChanged([in] Windows.Foundation.TypedEventHandler<Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher*, Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatusChangedEventArgs*>* handler, [out] [retval] EventRegistrationToken* token);
+            [eventremove] HRESULT StatusChanged([in] EventRegistrationToken token);
+            HRESULT Start();
+            HRESULT Stop();
+        }
+        https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.idl#L264C1-L276C1
+
+1. Implement
 
 """
+
+import ctypes
+from ctypes import wintypes
 import datetime
+import json
 import logging
 import os
+import re
+import string
 import sys
+import time
 
 def class_name(o):
     return o.__class__.__name__
@@ -86,17 +203,14 @@ comtypes_logger.setLevel(logging.DEBUG)
 #     See https://stackoverflow.com/questions/19561058/duplicate-output-in-simple-python-logging-configuration/19561320#19561320
 comtypes_logger.propagate = False
 
+wrtc_logger = logging.getLogger("wrtcommon")
+setup_logger(wrtc_logger)
+wrtc_logger.setLevel(logging.DEBUG)
+wrtc_logger.propagate = False
+
 logger = logging.getLogger(__name__)
 setup_logger(logger)
 logger.setLevel(logging.DEBUG)
-#logger.setLevel(logging.WARNING)
-#logger.setLevel(logging.INFO)
-
-import ctypes
-from ctypes import wintypes
-
-import string
-import re
 
 def parse_interface_or_enum(f, namespaces):
     """
@@ -149,8 +263,6 @@ def parse_interface_or_enum(f, namespaces):
         [contract(Windows.Foundation.UniversalApiContract, 2.0)] interface Windows.Devices.WiFiDirect.IWiFiDirectConnectionParameters2;
         [contract(Windows.Foundation.UniversalApiContract, 2.0)] interface Windows.Devices.Enumeration.IDevicePairingSettings;
     }
-
-    Unsupported formats:
 
     [
         contract(Windows.Foundation.FoundationContract, 1.0),
@@ -209,17 +321,25 @@ def parse_interface_or_enum(f, namespaces):
 
         elif (inside_braces and (runtime_class is not None)):
             # [default] interface Windows.Devices.WiFiDirect.IWiFiDirectConnectionParameters;
+            # XXX Missing non-default interfaces, eg
+            #   runtimeclass WiFiDirectConnectionRequest
+            #   {
+            #      [default] interface Windows.Devices.WiFiDirect.IWiFiDirectConnectionRequest;
+            #      interface Windows.Foundation.IClosable;
+            #   }
+            #   Should interfaces be a list of flag,name?
             m = re.match(r"\s*\[\s*default\s*\]\s*interface\s+([^;]*);", l)
             if (m is not None):
                 lines.append(l)
                 runtime_class["default"] = m.group(1)
 
         elif (inside_braces and (interface is not None)):
-            # Regular regular expressions are not powerful enough to match
-            # nested syntax like templated types, do a pre-parse of the line
-            # removing spaces from inside angles so the regular expressions
-            # patterns for analyzing argument types don't need to care about
-            # nested angles and commas and can just look at whitespace
+            # Python standard library regular expressions are not powerful
+            # enough to match nested syntax like templated types, do a pre-parse
+            # of the line removing spaces from inside angles so the regular
+            # expressions patterns for analyzing argument types don't need to
+            # care about nested angles and commas and can just look at
+            # whitespace
 
             # XXX This could also remove whitespace before and after dot, but
             #     the idl files being parsed don't generate those
@@ -245,10 +365,16 @@ def parse_interface_or_enum(f, namespaces):
             l = ll
             print "ll", repr(ll)
                     
+            # XXX Add support for method split in two lines, eg Split() in
+            #     collections.idl needs that (for now the .idl is modified so
+            #     the lines are merged)
             m = re.match(r"""
+                # XXX Allow multiple return flags, for now ignore [deprecated] 
+                #     and [default_overload]
+                (\[\s*deprecated\s*\(\s*[^)]*\)\s*\]\s*)?
+                (\[\s*default_overload\s*\]\s*)?
                 (\[\s*(?P<method_flag>eventadd|eventremove|propget|propput|overload\s*\(\s*[^)]*\))\s*\])?\s*
-                (?P<return_type>[a-zA-Z0-9_.*<>,]+)\s*
-                (?P<method_name>\w+)\s*
+                (?P<return_type>[a-zA-Z0-9_.*<>,]+)\s* (?P<method_name>\w+)\s*
                 \(
                     (?P<all_params>(
                         (?P<all_param_flags>(\[\s*
@@ -327,6 +453,9 @@ def parse_interface_or_enum(f, namespaces):
                 methods.append(method)
                 
         else:
+            # XXX Cleanup all these into a single regexp?
+            # XXX Have a single path interface initialization
+            # XXX Have a single path runtime_class initialization
             m = re.match(r"\s*\[?\s*uuid\(\s*([^)]*)\s*\)\s*\]?\s*", l)
             if (m is not None):
                 print "uuid", m.group(1)
@@ -337,6 +466,16 @@ def parse_interface_or_enum(f, namespaces):
                 lines.append(l)
                 continue
 
+            m = re.match(r"\s*\[?\s*exclusiveto\(\s*([^)]*)\s*\)\s*\]?\s*", l)
+            if (m is not None):
+                print "exclusiveto", m.group(1)
+                if (interface is None):
+                    interface = {}
+                    lines = []
+                interface.update({ "exclusiveto": m.group(1) })
+                lines.append(l)
+                continue
+        
             m = re.match(r"\s*\[?\s*activatable\(\s*([^)]*)\s*\)\s*\]?\s*", l)
             if (m is not None):
                 print "activatable", m.group(1)
@@ -346,17 +485,18 @@ def parse_interface_or_enum(f, namespaces):
                 runtime_class.update({ "activatable": True })
                 lines.append(l)
                 continue
-
-            m = re.match(r"\s*\[\s*exclusiveto\(([^)]*)\)\s*\]\s*", l)
+        
+            m = re.match(r"\s*\[?\s*static\(\s*([^)]*)\s*\)\s*\]?\s*", l)
             if (m is not None):
-                print "exclusiveto", m.group(1)
-                if (interface is None):
-                    interface = {}
+                print "static", m.group(1)
+                if (runtime_class is None):
+                    runtime_class = {}
                     lines = []
-                interface.update({ "exclusiveto": m.group(1) })
+                runtime_class.update({ "statics": runtime_class.get("statics", []) + [m.group(1).split(",")[0]] })
                 lines.append(l)
                 continue
-            
+
+
             # Note the brace may not come if this is a forward declaration ended
             # by ";"
             m = re.match(r"\s*runtimeclass\s+(\w+)", l)
@@ -392,12 +532,17 @@ def parse_interface_or_enum(f, namespaces):
                 print "pushed namespace", namespaces
                 continue
 
-            m = re.match(r"\s*interface\s+(?P<interface_name>(\w|[<,>])+)\s*:\s*(?P<parent_name>\w+)\s*", l)
+            # XXX Trim intermediate spaces inside angles like it's done with
+            #     types?
+            m = re.match(r"\s*interface\s+(?P<interface_name>(\w|[< ,>])+)\s*:\s*(?P<parent_name>\w+)\s*", l)
             if (m is not None):
                 print "interface name", m.group("interface_name"), "parent name", m.group("parent_name")
                 interface.update({
                     "parent": m.group("parent_name"),
-                    "name": m.group("interface_name"),
+                    # XXX For now do strip on the name since there's no proper
+                    #     space removal inside angles (and this is still not
+                    #     removing them)
+                    "name": m.group("interface_name").strip(),
                     "lines": lines,
                     "type": "interface",
                 })
@@ -504,11 +649,11 @@ class CodeGen(object):
         # g.append("""
         #   some indented code
         # """)
-        # use the second line to check the base indent
-        base_indent_index = 0
+        # skip the first line completely (don't ignore on single lines in case
+        # it's coming from a single separator line)
         if ((len(lines) > 1) and (lines[0].strip() == "")):
-            base_indent_index = 1
-        base_indent = len(lines[base_indent_index]) - len(lines[base_indent_index].lstrip())
+            lines = lines[1:]
+        base_indent = len(lines[0]) - len(lines[0].lstrip())
         for line in lines:
             self.append_line(line[base_indent:])
 
@@ -541,22 +686,68 @@ def generate_python_runtime_class(g, runtime_class, type_mappings):
         def __new__(cls):
             return activate_instance(cls)
     """
+    # XXX Missing statics
+    # [static(Windows.Devices.WiFiDirect.IWiFiDirectDeviceStatics, Windows.Foundation.UniversalApiContract, 1.0)]
+    # [static(Windows.Devices.WiFiDirect.IWiFiDirectDeviceStatics2, Windows.Foundation.UniversalApiContract, 1.0)]
+
+    type_name = convert_type_name(runtime_class["name"], type_mappings)
+    default_interface = runtime_class.get("default", None)
+    if (default_interface is None):
+        # Some runtimeclasses eg KeyCredentialManager are empty, ignore
+        return
+
+    interface_name = convert_type_name(default_interface, type_mappings)
+    g.append("class %s(%s):", type_name, interface_name)
+
+    g.push_indent()
+
+    g.append(['"""'] + runtime_class["lines"] + ['"""'])
     if (runtime_class.get("activatable", False)):
-        type_name = convert_type_name(runtime_class["name"], type_mappings)
-        interface_name = convert_type_name(runtime_class["default"], type_mappings)
-        g.append("class %s(%s):", type_name, interface_name)
-
-        g.push_indent()
-
-        g.append(['"""'] + runtime_class["lines"] + ['"""'])
         g.append(
             """
             def __new__(cls):
-                return activate_instance('%s', %s)
+                instance = activate_instance('%s', %s)
+                # XXX This calls __init__ to wrap the object just created so the
+                #     pythonic methods in the wrapper can be used (eg event 
+                #     hooking), do it in activate_instance or find another 
+                #     mechanism?
+                instance.__init__()
+                return instance
             """, 
             runtime_class["name"], interface_name)
+
+    g.pop_indent()
+    g.append("")
+    
+    if (runtime_class.get("statics", [])):
+        # Note the runtime class is the device, not the devicestatic
+        runtime_class_name = runtime_class["name"]
+        for interface_name in runtime_class["statics"]:
+            # [static(Windows.Devices.WiFiDirect.IWiFiDirectDeviceStatics, Windows.Foundation.UniversalApiContract, 1.0)]
+            interface_name = convert_type_name(interface_name, type_mappings)
             
-        g.append("")
+            # XXX This assumes the static is IInspectable, should it look it up
+            #     or should this be deferred to when the static class is
+            #     processed and looked up then?
+            
+            # XXX This is currently prefixing the class with _s to avoid stack
+            #     overflow when creating the pointer to the interface, since
+            #     __new__ calls activate_static which creates a pointer to the
+            #     class which seems to create an instance of the class, maybe
+            #     move inside the runtime_class?
+            g.append("class %s_s(%s):", interface_name, "IInspectable")
+            g.push_indent()
+            g.append(
+                """
+                _iid_ = IID_%s
+                def __new__(cls):
+                    static = activate_static("%s", %s) 
+                    return static
+                """, interface_name, runtime_class_name, interface_name
+            )
+            g.pop_indent()
+
+    
 
 def convert_type_name(type_name, type_mappings):
     name = type_mappings.get(type_name, None)
@@ -580,6 +771,7 @@ def convert_type_name(type_name, type_mappings):
         # becomes
         # __FITypedEventHandler_2_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisher_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisherStatusChangedEventArgs_t
         param_count_stack = []
+        prefix = ""
         for m in re.finditer(r"(\w+|[*<,>.])", type_name):
             token = m.group(1)
             if (token == "*"):
@@ -594,12 +786,13 @@ def convert_type_name(type_name, type_mappings):
                 #     added manually with the right name mangling
 
             elif (token == "."):
-                name += "__C"
+                #name += "__C"
                 # XXX Remove prefixes for the time being, in the future probably
                 #     force caller to fill in mappings to remove them or have a
                 #     prefix removal set?
-                #name = ""
-
+                if (prefix != "wintypes"):
+                    name = name[:-len(prefix)]
+                
             elif (token == "<"):
                 name = name + "_%d_"
                 param_count_stack.append(1)
@@ -609,20 +802,20 @@ def convert_type_name(type_name, type_mappings):
                 param_count_stack[-1] += 1
             
             elif (token == ">"):
-                
                 i = name.rfind("%d")
                 name = name[0:i] + (name[i:] % param_count_stack.pop())
 
             else:
                 # XXX This needs to convert
-                name = name + type_mappings.get(m.group(1), m.group(1))
+                prefix = type_mappings.get(m.group(1), m.group(1))
+                name = name + prefix
 
         type_mappings[type_name] = name
 
     return name
 
 
-def generate_python_interface(g, interface, type_mappings, generate_short_methods = True):
+def generate_python_interface(g, interface, type_mappings, generate_header, generate_methods, generate_short_methods = True):
     """
     IID_IInspectable = comtypes.GUID('{AF86E2E0-B12D-4C6A-9C5A-D7AA65101E90}')
     class IInspectable(comtypes.IUnknown):
@@ -648,243 +841,324 @@ def generate_python_interface(g, interface, type_mappings, generate_short_method
             ),
         ]
     """
-    g.append("IID_%s = comtypes.GUID('{%s}')", interface["name"], interface["uuid"])
-    g.append("class %s(%s):", interface["name"], interface["parent"])
+    if ("<" in interface["name"]):
+        # templated interface names don't generate code, ignore
+        # XXX Change at parse time type from "interface" to "template" or
+        #     "templated interface"?
+        
+        # XXX Code using templated interfaces needs to read the templated
+        #     interface, generate the appropriate python code with the mangled
+        #     interface name, and replace the instantiation with the mangled
+        #     name
+        if (generate_header):
+            template_name = interface["name"]
+            # XXX This assumes there's no template overload depending on the
+            #     number of parameters
+            template_name = template_name[0:template_name.find("<")]
+            assert template_name not in type_mappings, "Duplicated template %r" % template_name
+            # XXX This needs proper handling when this dict is found instead of
+            #     a string in convert_type_name
+            ## type_mappings[template_name] = interface
+        return
 
-    g.push_indent()
-    g.append(['"""'] + interface["lines"] + ['"""'])
-    # XXX These two don't seem to be needed, remove?
-    #g.append("_case_insensitive_ = True")
-    #g.append("_idlflags_ = []")
-    g.append("_iid_ = IID_%s", interface["name"])
+    if (generate_header):
+        g.append("IID_%s = comtypes.GUID('{%s}')", interface["name"], interface["uuid"])
+        g.append("class %s(%s):", interface["name"], interface["parent"])
 
-    # Write the methods once the class has been defined so parameters can refer
-    # to the class if necessary
-    g.pop_indent()
-    g.append("%s._methods_ = [" % interface["name"])    
-    g.push_indent()
-    
-    for method in interface.get("methods", []):
-        g.append("comtypes.COMMETHOD(")
+        g.push_indent()
+        g.append(['"""'] + interface["lines"] + ['"""'])
+        # XXX These two don't seem to be needed, remove?
+        #g.append("_case_insensitive_ = True")
+        #g.append("_idlflags_ = []")
+        g.append("_iid_ = IID_%s", interface["name"])
+        typed_event_handler_names = []
+        async_event_handler_names = []
+        for method in interface.get("methods", []):
+            is_async_operation_handler = (
+                (method["flag"] == "propput") and 
+                (len(method["params"]) > 0) and 
+                method["params"][0]["type"].startswith("IAsyncOperationCompletedHandler")
+            )
+            if ((method["flag"] != "eventadd") and not is_async_operation_handler):
+                continue
+
+            if (is_async_operation_handler):
+                typed_event_handler_name = convert_type_name(method["params"][0]["type"], type_mappings).split("(")[1].split(")")[0]
+                _, _, first_arg_type = typed_event_handler_name.split("_")
+                second_arg_type = "AsyncStatus"
+
+                g.append("""
+                    def __init__(self):
+                        self._OnCompletedFn = None
+                        self._OnCompletedHandler = None
+                        self._OnCompletedHandlerClass = None
+                    
+                    @property
+                    def OnCompleted(self):
+                        logger.info("")
+                        # type:()->FWiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherCompletedEventArgs
+                        return self._OnCompletedFn
+                    
+                    @OnCompleted.setter
+                    def OnCompleted(self, fn):
+                        logger.info("")
+                        # type:(FWiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherCompletedEventArgs) -> None
+                        if (self._OnCompletedHandler is not None):
+                            self._OnCompletedHandler = None
+                            self._OnCompletedHandlerClass = None
+                            # XXX Does setting a null handler remove it?
+                            # XXX Does this need to point to the right interface?
+                            handler = wintypes.POINTER(IAsyncOperationCompletedHandler_1_WiFiDirectDevice)()
+                    
+                        if (fn is not None):
+                            self._OnCompletedHandlerClass = make_typed_event_handler_class(
+                                IAsyncOperationCompletedHandler_1_WiFiDirectDevice,
+                                wintypes.POINTER(IAsyncOperation_1_WiFiDirectDevice),
+                                AsyncStatus,
+                                fn
+                            )
+                            self._OnCompletedHandler = self._OnCompletedHandlerClass()
+                    
+                            handler = self._OnCompletedHandler.QueryInterface(self._OnCompletedHandlerClass._event_handler_interface_)
+                    
+                        self._IAsyncOperation_1_WiFiDirectDevice__com__set_Completed(handler)
+                        self._OnCompletedFn = fn
+                    """.replace("IAsyncOperationCompletedHandler_1_WiFiDirectDevice", typed_event_handler_name)
+                    .replace("wintypes.POINTER(WiFiDirectDevice)", "wintypes.POINTER(%s)" % first_arg_type)
+                    .replace("AsyncStatus", "%s" % second_arg_type)
+                    .replace("IAsyncOperation_1_WiFiDirectDevice", interface["name"])
+                    .replace("Completed", method["name"])
+                )
+                async_event_handler_names.append(typed_event_handler_name)
+
+            else:
+                # Convert to type name, but remove the pointer
+                # XXX This assumes it's a typedeventhandler
+                typed_event_handler_name = convert_type_name(method["params"][0]["type"], type_mappings).split("(")[1].split(")")[0]
+                _, _, first_arg_type, second_arg_type = typed_event_handler_name.split("_")
+
+
+                g.append("""
+                    def __init__(self):
+                        self._OnStatusChangedFn = None
+                        self._OnStatusChangedToken = None
+                        self._OnStatusChangedHandler = None
+                        self._OnStatusChangedHandlerClass = None
+                        
+                    @property
+                    def OnStatusChanged(self):
+                        logger.info("")
+                        # type:()->FWiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs
+                        return self._OnStatusChangedFn
+
+                    @OnStatusChanged.setter
+                    def OnStatusChanged(self, fn):
+                        logger.info("")
+                        # type:(FWiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs) -> None
+                        if (self._OnStatusChangedToken is not None):
+                            self._IWiFiDirectAdvertisementPublisher__com_remove_StatusChanged(self._OnStatusChangedToken)
+                            self._OnStatusChangedToken = None
+                            self._OnStatusChangedHandler = None
+                            self._OnStatusChangedHandlerClass = None
+                        
+                        if (fn is not None):
+                            self._OnStatusChangedHandlerClass = make_typed_event_handler_class(
+                                TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs,
+                                wintypes.POINTER(IWiFiDirectAdvertisementPublisher), 
+                                wintypes.POINTER(IWiFiDirectAdvertisementPublisherStatusChangedEventArgs),
+                                fn
+                            )
+                            self._OnStatusChangedHandler = self._OnStatusChangedHandlerClass()
+
+                            self._OnStatusChangedToken = EventRegistrationToken()
+                            handler = self._OnStatusChangedHandler.QueryInterface(self._OnStatusChangedHandlerClass._event_handler_interface_)
+                            self._IWiFiDirectAdvertisementPublisher__com_add_StatusChanged(
+                                handler, 
+                                ctypes.byref(self._OnStatusChangedToken)
+                            )
+                        self._OnStatusChangedFn = fn
+                    """.replace("TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs", typed_event_handler_name)
+                    .replace("wintypes.POINTER(IWiFiDirectAdvertisementPublisher)", "wintypes.POINTER(%s)" % first_arg_type)
+                    .replace("wintypes.POINTER(IWiFiDirectAdvertisementPublisherStatusChangedEventArgs)", "wintypes.POINTER(%s)" % second_arg_type)
+                    .replace("IWiFiDirectAdvertisementPublisher", interface["name"])
+                    .replace("StatusChanged", method["name"])
+                    
+                )
+                typed_event_handler_names.append(typed_event_handler_name)
+
+        # Write the methods once the class has been defined so parameters can refer
+        # to the class if necessary
+        g.pop_indent()
+
+        # XXX This should check for duplicates?
+        for typed_event_handler_name in typed_event_handler_names:
+            g.append("""
+                class TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs(comtypes.IUnknown):
+                    _iid_ = IID_TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs if ("IID_TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs" in globals()) else IID_ITypedEventHandler 
+
+                """.replace("TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs", typed_event_handler_name)
+            )
+        for async_event_handler_name in async_event_handler_names:
+            g.append("""
+                class IAsyncOperationCompletedHandler_1_WiFiDirectDevice(comtypes.IUnknown):
+                    _iid_ = IID_IAsyncOperationCompletedHandler_1_WiFiDirectDevice if ("IID_IAsyncOperationCompletedHandler_1_WiFiDirectDevice" in globals()) else IID_IAsyncEventHandler 
+
+                """.replace("IAsyncOperationCompletedHandler_1_WiFiDirectDevice", async_event_handler_name)
+            )
+
+
+    if (generate_methods):
+        g.append("%s._methods_ = [" % interface["name"])
         g.push_indent()
 
-        # g.append("[comtypes.helpstring('Method %s')],", method["name"])
-        flag = "[]"
-        if (method["flag"] is not None):
-            flag = "['%s']" % method["flag"]
-        g.append("#%s", method["return"])
-        g.append("%s, %s, '%s',", flag, convert_type_name(method["return"], type_mappings), method["name"])
+        event_methods = []
+        for method in interface.get("methods", []):
+            is_async_operation_handler = (
+                (method["flag"] == "propput") and 
+                (len(method["params"]) > 0) and 
+                method["params"][0]["type"].startswith("IAsyncOperationCompletedHandler")
+            )
+            if ((method["flag"] == "eventadd") or is_async_operation_handler):
+                event_methods.append(method)
 
-        for param in method["params"]:
-            # XXX This should do something about types not declared yet, defer
-            #     the creation of the COMMETHOD or such (but won't work for
-            #     short methods?)
+            method_name = method["name"] 
+            if (method["flag"] == "eventadd"):
+                method_name = "add_" + method_name
+            elif (method["flag"] == "eventremove"):
+                method_name = "remove_" + method_name
+            g.append("# [%s] %s %s(%s)", 
+                method["flag"],
+                method["return"], 
+                method["name"], 
+                string.join(["%s %s %s" % (
+                    string.join(["[%s]" % flag for flag in param["flags"]], " "),
+                    param["type"], 
+                    param["name"]) for param in method["params"]], ",")
+            )
+            g.append("comtypes.COMMETHOD(")
+            g.push_indent()
 
-            # (['out'], wintypes.POINTER(TrustLevel), 'trustLevel'),
-            flags = []
-            for flag in param["flags"]:
-                flags.append("'%s'" % flag)
+            # g.append("[comtypes.helpstring('Method %s')],", method["name"])
+            flag = "[]"
+            if (method["flag"] is not None):
+                flag = "['%s']" % method["flag"]
+            g.append("%s, %s, '%s',", flag, convert_type_name(method["return"], type_mappings), method_name)
 
-            type_name = convert_type_name(param["type"], type_mappings)
-            g.append("#%s", param["type"])
-            g.append("([%s], %s, '%s'),", string.join(flags, ","), type_name, param["name"])
+            for param in method["params"]:
+                # (['out'], wintypes.POINTER(TrustLevel), 'trustLevel'),
+                flags = []
+                for flag in param["flags"]:
+                    flags.append("'%s'" % flag)
+
+                type_name = convert_type_name(param["type"], type_mappings)
+                g.append("([%s], %s, '%s'),", string.join(flags, ","), type_name, param["name"])
+
+            g.pop_indent()
+            g.append("),")
 
         g.pop_indent()
-        g.append("),")
+        g.append("]")
+        g.append("")
 
-    g.pop_indent()
-    g.append("]")
+        for method in event_methods:
+            # XXX This assumes it's a typedeventhandler
+            typed_event_handler_name = convert_type_name(method["params"][0]["type"], type_mappings).split("(")[1].split(")")[0]
+            l = typed_event_handler_name.split("_")
+            # Typed events handlers have 4, completed handlers have 3
+            if (len(l) == 4):
+                first_arg_type = l[2]
+                # XXX This puts POINTER in the comment prototype, fix 
+                second_arg_type = "wintypes.POINTER(%s)" % l[3]
+                
+                
+            else:
+                first_arg_type = interface["name"]
+                second_arg_type = "AsyncStatus"
+                
+            g.append("""
+                event_handler_class._methods_ = [
+                    # HRESULT Invoke([in] sender_class *sender, [in] args_class *args)
+                    comtypes.COMMETHOD(
+                        [''], wintypes.HRESULT, "Invoke", 
+                        (['in'], wintypes.POINTER(sender_class)),
+                        (['in'], args_class),
+                    ),
+                ]
+                """.replace("event_handler_class", typed_event_handler_name)
+                    .replace("sender_class", first_arg_type)
+                    .replace("args_class", second_arg_type)
+            )
+
     g.append("")
 
 
 def write_python(objs, filepath, type_mappings):
     with open(filepath, "w") as f:
         g = CodeGen(f)
-        # XXX Move these to some wrttypes.py file
-        g.append("""
-            # Autogenerated %s %s
-            import ctypes
-            from ctypes import wintypes
-            import logging
-
-            import comtypes
-            logger = logging.getLogger(__name__)
-
-            HSTRING = wintypes.HANDLE
-            ENUM = wintypes.UINT
-
-            combase=ctypes.WinDLL('combase.dll')
-
-            def check_hresult(hr):
-                if (hr not in [comtypes.hresult.S_OK, comtypes.hresult.S_FALSE]):
-                    raise comtypes.COMError(hr, comtypes.FormatError(hr),
-                                (None, None, 0, None, None))
-
-            class HString(HSTRING):
-                def __init__(self, s_or_hstr = None):
-                    if (isinstance(s_or_hstr, HSTRING)):
-                        super(HString, self).__init__(s_or_hstr.value)
-
-                    else:
-                        u = unicode(s_or_hstr)
-                        hr = combase.WindowsCreateString(u, len(u), ctypes.byref(self))
-                        logger.info("WindowsCreateString 0x%%x 0x%%x", hr, self.value)
-
-                        check_hresult(hr)
-                    
-                def __str__(self):
-                    length = wintypes.UINT()
-                    p = combase.WindowsGetStringRawBuffer(self, ctypes.byref(length))
-                    logger.info("WindowsGetStringRawBuffer %%r %%r", length, p)
-
-                    return ctypes.wstring_at(p, length.value)
-
-                def __del__(self):
-                    hr = combase.WindowsDeleteString(self)
-                    logger.info("WindowsDeleteString %%x", hr)
-                    
-                    check_hresult(hr)
-
-                    self.value = None
-
-            def activate_instance(runtime_class_name, interface):
-                inspectable = wintypes.POINTER(IInspectable)()
-                hr = combase.RoActivateInstance(
-                    HString(runtime_class_name),
-                    ctypes.byref(inspectable)
-                )
-                check_hresult(hr)
-                logger.info("RoActivateInstance %%x", hr)
-                obj = inspectable.QueryInterface(interface)
-                return obj
-
-            class TrustLevel(ENUM):
-                BaseTrust = 0
-                PartialTrust = BaseTrust + 1
-                FullTrust = PartialTrust + 1
-
-            IID_IInspectable = comtypes.GUID('{AF86E2E0-B12D-4C6A-9C5A-D7AA65101E90}')
-            class IInspectable(comtypes.IUnknown):
-                _case_insensitive_ = True
-                _idlflags_ = []
-                _iid_ = IID_IInspectable
-                _methods_ = [
-                    comtypes.COMMETHOD(
-                        [comtypes.helpstring('Method GetIids')],
-                        comtypes.HRESULT,
-                        'GetIids',
-                        (['out'], wintypes.POINTER(wintypes.ULONG), 'iidCount'),
-                        (['out'], wintypes.POINTER(wintypes.POINTER(comtypes.IID)), 'iids'),
-                    ),
-                    comtypes.COMMETHOD(
-                        [comtypes.helpstring('Method GetRuntimeClassName')],
-                        comtypes.HRESULT,
-                        'GetRuntimeClassName',
-                        (['out'], wintypes.POINTER(HSTRING), 'className'),
-                    ),
-                    comtypes.COMMETHOD(
-                        [comtypes.helpstring('Method GetTrustLevel')],
-                        comtypes.HRESULT,
-                        'GetTrustLevel',
-                        (['out'], wintypes.POINTER(TrustLevel), 'trustLevel'),
-                    ),
-                ]
-
-            # See https://learn.microsoft.com/en-us/windows/win32/api/eventtoken/ns-eventtoken-eventregistrationtoken
-            class EventRegistrationToken(ctypes.Structure):
-                _fields_ = [
-                    ('value', ctypes.c_int64),
-                ]
-            """, os.path.basename(filepath), datetime.datetime.now())
+        g.append("# Autogenerated %s %s", os.path.basename(filepath), datetime.datetime.now())
+        g.append("from wrtcommon import *")
+        g.append("")
         
         for obj in objs.itervalues():
             if (obj["type"] == "enum"):
                 g.reset_indent()
                 generate_python_enum(g, obj)
         
-        # XXX This should at least generate the interfaces/runtime classes in
-        #     order so they are not used before being defined? Another option is
-        #     to declare all of them with pass or the _iid_ and then fill in the
-        #     methods
+        # Declare interfaces first, then runtimeclasses then methods as a 
+        # way of "forward" the interface declaration so they can be used in the
+        # runtime classes and the runtime classes and the interfaces in the
+        # methods
+
         for obj in objs.itervalues():
             if (obj["type"] == "interface"):
                 g.reset_indent()
-                generate_python_interface(g, obj, type_mappings)
-        
+                generate_python_interface(g, obj, type_mappings, True, False)
+
         for obj in objs.itervalues():
             if (obj["type"] == "runtimeclass"):
                 g.reset_indent()
                 generate_python_runtime_class(g, obj, type_mappings)
+
+        for obj in objs.itervalues():
+            if (obj["type"] == "interface"):
+                g.reset_indent()
+                generate_python_interface(g, obj, type_mappings, False, True)
         
 
 def write_python_from_idls():
     type_mappings = {
-        "UINT16" : "wintypes.UINT16",
-        "INT16" : "wintypes.INT16",
-        "UINT32" : "wintypes.UINT32",
-        "INT32" : "wintypes.INT32",
-        "UINT64" : "wintypes.UINT64",
-        "INT64" : "wintypes.INT64",
+        "BYTE": "wintypes.BYTE",
+        "UINT16" : "wintypes.USHORT",
+        "INT16" : "wintypes.SHORT",
+        "UINT32" : "wintypes.ULONG",
+        "INT32" : "wintypes.LONG",
+        "UINT64" : "wintypes.ULARGE_INTEGER",
+        "INT64" : "wintypes.LARGE_INTEGER",
         "HRESULT" : "wintypes.HRESULT",
         "boolean" : "wintypes.BOOL",
     }
 
     for filename in [
-        "simple.idl",
+        #"simple.idl",
+        "windows.foundation.collections.idl",
+        # XXX Necessary for PasswordCredential Gives error, investigate
+        "windows.security.credentials.idl",
         "windows.devices.wifidirect.idl",
-        "windows.foundation.idl",
-        # XXX Breaks because of using spaces inside <>, needs to support some
-        #     level of nesting?
-        #     "windows.foundation.collections.idl",
+        "windows.devices.enumeration.idl",
+        #"windows.foundation.idl",
+        # XXX This needs empty line and comment support between methods
+        # "asyncinfo.idl",
         ] :
+        
         filepath = os.path.join("_out", "idls", filename)
+        print "parsing %r" % filepath
         entries = parse_idl_file(filepath)
         with open(os.path.join("_out", "idls", os.path.splitext(filename)[0] + ".json"), "w") as f:
-            import json
             json.dump(entries, f, indent=2, sort_keys=True)
+            json.dump(type_mappings, f, indent=2, sort_keys=True)
 
         filepath = os.path.join("_out", os.path.splitext(filename)[0] + ".py")
         write_python(entries, filepath, type_mappings)
-
-class GUID(ctypes.Structure):
-    # XXX wintypes.DWORD, wintypes.BYTE and wintypes.DWORD show as negative in
-    #     %x, not clear why, use ctypes.c_uXXX instead
-    _fields_ = [("Data1", ctypes.c_uint32),
-                ("Data2", ctypes.c_uint16),
-                ("Data3", ctypes.c_uint16),
-                ("Data4", ctypes.c_uint8 * 8)]
-
-    def __str__(self):
-        # See https://learn.microsoft.com/en-us/windows/win32/api/guiddef/ns-guiddef-guid
-        return "%08X-%04X-%04X-%s-%s" % (
-            self.Data1,
-            self.Data2,
-            self.Data3,
-            # https://devblogs.microsoft.com/oldnewthing/20220928-00/?p=107221
-            string.join(["%02X" % b for b in self.Data4[:2]], ""),
-            string.join(["%02X" % b for b in self.Data4[2:]], ""),
-            )
-
-def str_to_guid(s):
-    s = s.trim()
-    if (s.startswith("{")):
-        s = s[1:-1].trim()
-    assert len(s) == 8 + 4 + 4 + 8*2 + 4, "Unexpected len %d" % len(s)
-    l = s.split("-")
-    assert len(l) == 5, "Unexpected number of dashes %d" % len(s)
-    l[3] = l[3] + l.pop()
-    
-    data = (
-        int(l[0], 16), 
-        int(l[1], 16),
-        int(l[2], 16),
-        tuple(int(l[3][i*2:i*2+2], 16) for i in xrange(len(l[3])/2))
-    )
-
-    guid = GUID(*data)
-    print "in", s, "out", str(guid)
-
-    return guid
 
 def clr_test():
     # XXX This test gives errors, the winrt dlls are not managed dlls so trying
@@ -1001,6 +1275,46 @@ def wlanapi_test():
     # https://github.com/dfct/Inssidious/blob/master/InssidiousCore/Controllers/HostedNetworkController.cpp
 
 def com_test():
+    class GUID(ctypes.Structure):
+        # XXX wintypes.DWORD, wintypes.BYTE and wintypes.DWORD show as negative in
+        #     %x, not clear why, use ctypes.c_uXXX instead, investigate
+        _fields_ = [("Data1", ctypes.c_uint32),
+                    ("Data2", ctypes.c_uint16),
+                    ("Data3", ctypes.c_uint16),
+                    ("Data4", ctypes.c_uint8 * 8)]
+
+        def __str__(self):
+            # See https://learn.microsoft.com/en-us/windows/win32/api/guiddef/ns-guiddef-guid
+            return "%08X-%04X-%04X-%s-%s" % (
+                self.Data1,
+                self.Data2,
+                self.Data3,
+                # https://devblogs.microsoft.com/oldnewthing/20220928-00/?p=107221
+                string.join(["%02X" % b for b in self.Data4[:2]], ""),
+                string.join(["%02X" % b for b in self.Data4[2:]], ""),
+                )
+
+    def str_to_guid(s):
+        s = s.trim()
+        if (s.startswith("{")):
+            s = s[1:-1].trim()
+        assert len(s) == 8 + 4 + 4 + 8*2 + 4, "Unexpected len %d" % len(s)
+        l = s.split("-")
+        assert len(l) == 5, "Unexpected number of dashes %d" % len(s)
+        l[3] = l[3] + l.pop()
+        
+        data = (
+            int(l[0], 16), 
+            int(l[1], 16),
+            int(l[2], 16),
+            tuple(int(l[3][i*2:i*2+2], 16) for i in xrange(len(l[3])/2))
+        )
+
+        guid = GUID(*data)
+        print "in", s, "out", str(guid)
+
+        return guid
+
     # See https://stackoverflow.com/questions/48986244/access-com-methods-from-python
     ole32=ctypes.WinDLL('Ole32.dll')
     
@@ -1239,158 +1553,16 @@ def winrt_test():
     hr = combase.WindowsDeleteString(hstr)
     print "WindowsDeleteString", hex(hr)
 
-    
-
 def winrt_wifi():
-    """
-    Port to Python of
-
-    https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/WiFiDirectLegacyAP
-
-    ## Other ports
-    
-    https://github.com/gerfen/WiFiDirectLegacyAPCSharp
-    https://github.com/zig13/WifiDirectLegacySurplex
-    https://github.com/spieglt/wifidirect-legacy-ap
-    https://github.com/govert/WiFiDirectLegacyAPDemo
-
-
-    ## PyWinRt / python winsdk
-
-    https://github.com/pywinrt/python-winsdk/blob/main/pywinrt/winsdk/src/_winrt.cpp
-    https://github.com/pywinrt/python-winsdk
-
-    ## pythonnet
-
-    https://pythonnet.github.io/pythonnet/python.html
-
-    ## rotypes
-
-    https://github.com/ArknightsAutoHelper/ArknightsAutoHelper/tree/master/rotypes
-
-    ## comtypes
-
-    https://github.com/enthought/comtypes
-    https://pythonhosted.org/comtypes/
-    https://pythonhosted.org/comtypes/server.html
-    https://github.com/shanewholloway/comtypes
-    https://svn.python.org/projects/ctypes/tags/comtypes-0.3.2/docs/com_interfaces.html
-
-    ## ctypes
-    
-    https://github.com/python/cpython/blob/main/Lib/ctypes/wintypes.py
-    https://docs.python.org/2.7/library/ctypes.html
-    https://stackoverflow.com/questions/53311519/python-3-7-passing-parameters-to-dll-using-ctypes
-
-    ## comtypes examples
-
-    https://stackoverflow.com/questions/57149456/how-to-implement-windows-10-ivirtualdesktopmanager-interface-in-python
-    https://github.com/DanEdens/Virtual_Desktops_Plugin/blob/master/Virtualdesktops/__int__.py
-    https://stackoverflow.com/questions/48986244/access-com-methods-from-python
-    https://github.com/Qirky/PyKinectTk/blob/master/PyKinectTk/utils/PyKinect2/PyKinectV2.py
-
-
-    ## winrt/winsdk reference/sources
-    https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/inspectable.idl
-    https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/roapi.h#L237
-    https://raw.githubusercontent.com/tpn/winsdk-10/master/Include/10.0.16299.0/winrt/windows.foundation.h
-    
-    https://learn.microsoft.com/en-us/cpp/cppcx/wrl/how-to-activate-and-use-a-windows-runtime-component-using-wrl?view=msvc-170
-
-    https://stackoverflow.com/questions/16466641/how-to-declare-and-link-to-roinitialize-rouninitialize-rogetactivationfactory-an
-    https://stackoverflow.com/questions/71607881/using-wrl-to-access-winrt-where-do-you-find-the-right-names-to-use-for-the-clas
-    https://stackoverflow.com/questions/71595142/using-wrl-to-access-winrt-i-cannot-get-activateinstance-to-work
-
-    https://learn.microsoft.com/en-us/windows/win32/api/roapi/nf-roapi-rogetactivationfactory
-    https://learn.microsoft.com/en-us/windows/win32/api/roapi/nf-roapi-roactivateinstance
-    https://learn.microsoft.com/en-gb/cpp/cppcx/wrl/hstring-class?view=msvc-170&viewFallbackFrom=vs-2017
-    https://learn.microsoft.com/en-us/uwp/cpp-ref-for-winrt/hstring
-    https://learn.microsoft.com/en-us/windows/win32/api/winstring/nf-winstring-windowscreatestring
-    https://learn.microsoft.com/en-us/windows/win32/winrt/hstring
-
-    ## winrt metadata
-    
-    winmd files
-
-    https://stackoverflow.com/questions/54375771/how-to-read-a-winmd-winrt-metadata-file
-    https://github.com/microsoft/winmd/tree/master
-    https://learn.microsoft.com/en-us/windows/win32/api/rometadataresolution/nf-rometadataresolution-rogetmetadatafile
-
-    idl files
-
-    Some idl are missing from winrt (windows.foundation.collections.idl), mingw seems to have all of them
-        pacman -S mingw-w64-i686-headers-git
-
-    https://packages.msys2.org/package/mingw-w64-i686-headers-git?repo=mingw32
-    https://github.com/MicrosoftDocs/winrt-related/blob/docs/winrt-related-src/midl-3/synthesizing-interfaces.md
-
-    ## winrt wifidirect
-
-    https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.h
-    https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.idl
-
-    https://learn.microsoft.com/en-us/windows/win32/nativewifi/using-the-wi-fi-direct-api
-    https://github.com/microsoft/Windows-universal-samples/tree/main/Samples/WiFiDirect/cpp
-    https://learn.microsoft.com/en-us/uwp/api/windows.devices.wifidirect.wifidirectlegacysettings?view=winrt-22621
-    
-
-    
-    Procedure
-
-    1. Get the line from 
-
-            https://github.com/microsoft/Windows-classic-samples/blob/main/Samples/WiFiDirectLegacyAP/cpp/WlanHostedNetworkWinRT.cpp
-
-        eg 
-             Microsoft::WRL::ComPtr<ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisher> _publisher;
-            hr = Windows::Foundation::ActivateInstance(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectAdvertisementPublisher).Get(), &_publisher);
-
-    1. Get the GUID and interface definition from 
-
-        https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.idl
-
-            [contract(Windows.Foundation.UniversalApiContract, 1.0)]
-            [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher)]
-            [uuid(B35A2D1A-9B1F-45D9-925A-694D66DF68EF)]
-            interface IWiFiDirectAdvertisementPublisher : IInspectable
-            {
-                [propget] HRESULT Advertisement([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisement** value);
-                [propget] HRESULT Status([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatus* value);
-                [eventadd] HRESULT StatusChanged([in] Windows.Foundation.TypedEventHandler<Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher*, Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatusChangedEventArgs*>* handler, [out] [retval] EventRegistrationToken* token);
-                [eventremove] HRESULT StatusChanged([in] EventRegistrationToken token);
-                HRESULT Start();
-                HRESULT Stop();
-            }
-            https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.idl#L264C1-L276C1
-
-    1. Implement
-
-
-
-    """
-
-    def array_to_guid(a):
-        assert len(a) == 11, "Unexpected length %d" % len(a)
-        
-        data1, data2, data3, data4 = a[0], a[1], a[2], a[3:]
-
-        s = "{%08X-%04X-%04X-%s-%s}" % (
-            data1,
-            data2,
-            data3,
-            # https://devblogs.microsoft.com/oldnewthing/20220928-00/?p=107221
-            string.join(["%02X" % b for b in data4[:2]], ""),
-            string.join(["%02X" % b for b in data4[2:]], ""),
-        )
-        logger.info("array_to_guid %s %s", a, s)
-
-        return comtypes.GUID(s)
-
     # XXX Setting the threaded mode fails inside vscode debugger, looks like COM
     #     is already initialized as single threaded in the debugger thread?
-    import os
-    if (os.environ.get('VSCODE_PID', None) is not None):
-        print("Running in VS Code")
+    # XXX There used to be a VSCODE_PID but looks like sometimes this is not set, 
+    #     check any VSCODE_ env vars
+    vscode_envs = [k for k in os.environ if "VSCODE_" in k]
+    logger.info("vscode_envs %r", sorted(vscode_envs))
+    running_under_vscode = (len(vscode_envs) > 1)
+    if (running_under_vscode):
+        logger.info("Running in VS Code")
 
     else:
         # Set multithreaded flag before comtypes is loaded in this thread,
@@ -1398,928 +1570,15 @@ def winrt_wifi():
         sys.coinit_flags = 0
     import comtypes
 
+    from wifidirect import HString, WiFiDirectAdvertisementPublisherStatus, \
+        WiFiDirectConnectionStatus, WiFiDirectConnectionRequest, AsyncStatus, \
+        IWiFiDirectDeviceStatics_s, WiFiDirectConnectionListener, \
+        WiFiDirectAdvertisementPublisher
+
     # Note this is redundant since it's done by comtypes when imported in this
     # thread
     #hr = comtypes.CoInitializeEx(0)
     #print "CoInitializeEx", hr
-
-    ENUM = wintypes.UINT
-
-    """
-    https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/inspectable.idl
-    [
-    object,
-    uuid(AF86E2E0-B12D-4c6a-9C5A-D7AA65101E90),
-    pointer_default(unique)
-    ]
-    interface IInspectable : IUnknown
-    {
-        HRESULT GetIids(
-            [out] ULONG * iidCount,
-            [out, size_is(,*iidCount)] IID ** iids);
-
-        HRESULT GetRuntimeClassName( [out] HSTRING * className);
-
-        HRESULT GetTrustLevel([out] TrustLevel * trustLevel);
-    }
-    """
-    # See https://stackoverflow.com/questions/57149456/how-to-implement-windows-10-ivirtualdesktopmanager-interface-in-python
-    IID_IInspectable = comtypes.GUID('{AF86E2E0-B12D-4C6A-9C5A-D7AA65101E90}')
-    class TrustLevel(ENUM):
-        BaseTrust = 0
-        PartialTrust = BaseTrust + 1
-        FullTrust = PartialTrust + 1
-    HSTRING = wintypes.HANDLE
-    class IInspectable(comtypes.IUnknown):
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _iid_ = IID_IInspectable
-        _methods_ = [
-            comtypes.COMMETHOD(
-                [comtypes.helpstring('Method GetIids')], comtypes.HRESULT, 'GetIids',
-                (['out'], wintypes.POINTER(wintypes.ULONG), 'iidCount'),
-                (['out'], wintypes.POINTER(wintypes.POINTER(comtypes.IID)), 'iids'),
-            ),
-            comtypes.COMMETHOD(
-                [comtypes.helpstring('Method GetRuntimeClassName')], comtypes.HRESULT, 'GetRuntimeClassName',
-                (['out'], wintypes.POINTER(HSTRING), 'className'),
-            ),
-            comtypes.COMMETHOD(
-                [comtypes.helpstring('Method GetTrustLevel')], comtypes.HRESULT, 'GetTrustLevel',
-                (['out'], wintypes.POINTER(TrustLevel), 'trustLevel'),
-            ),
-        ]
-
-
-
-    def check_hresult(hr):
-        if (hr not in [comtypes.hresult.S_OK, comtypes.hresult.S_FALSE]):
-            raise comtypes.COMError(hr, comtypes.FormatError(hr),
-                        (None, None, 0, None, None))
-
-    class HString(HSTRING):
-        def __init__(self, s_or_hstr = None):
-            if (isinstance(s_or_hstr, HSTRING)):
-                super(HString, self).__init__(s_or_hstr.value)
-
-            else:
-                u = unicode(s_or_hstr)
-                hr = combase.WindowsCreateString(u, len(u), ctypes.byref(self))
-                logger.info("WindowsCreateString %r %r", hex(hr), hex(self.value))
-
-                check_hresult(hr)
-            
-        def __str__(self):
-            length = wintypes.UINT()
-            p = combase.WindowsGetStringRawBuffer(self, ctypes.byref(length))
-            logger.info("WindowsGetStringRawBuffer %r %r", length, p)
-
-            return ctypes.wstring_at(p, length.value)
-
-        def __del__(self):
-            hr = combase.WindowsDeleteString(self)
-            logger.info("WindowsDeleteString %r", hex(hr))
-            
-            check_hresult(hr)
-
-            self.value = None
-
-    # https://learn.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
-    IID_IAgileObject = comtypes.GUID("{94EA2B94-E9CC-49E0-C0FF-EE64CA8F5B90}")
-    class IAgileObject(comtypes.IUnknown):
-        # This is a marker-only interface, it doesn't have methods
-        _iid_ = IID_IAgileObject
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-        ]
-
-    # https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/AsyncInfo.idl
-    # https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/asyncinfo.h
-    # {00000036-0000-0000-C000-000000000046}
-    class AsyncStatus(ENUM):
-        Started = 0
-        Completed = 1
-        Canceled = 2
-        Error = 3
-    IID_IAsyncInfo = array_to_guid((54, 0, 0, 192, 0, 0, 0, 0, 0, 0, 70))
-    class IAsyncInfo(IInspectable):
-        """
-            // Properties
-            [propget] HRESULT Id([out, retval] unsigned __int32 *id);
-
-            // provide a C++ overload for async status that doesn't rely on 
-            // the global definition of asyncstatus to support _HIDE_GLOBAL_ASYNC_STATUS
-            [propget] HRESULT Status([out, retval] AsyncStatus *status);
-
-            [propget] HRESULT ErrorCode([out,retval] HRESULT *errorCode);
-            
-            // Methods
-            HRESULT Cancel();
-            HRESULT Close();
-        """
-        _iid_ = IID_IAsyncInfo
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT Id([out, retval] unsigned __int32 *id);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Id", 
-                (['out', 'retval'], wintypes.POINTER(ctypes.c_int32)),
-            ),
-            # [propget] HRESULT Status([out, retval] AsyncStatus *status);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Status", 
-                (['out', 'retval'], wintypes.POINTER(AsyncStatus)),
-            ),
-            # [propget] HRESULT ErrorCode([out,retval] HRESULT *errorCode);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "ErrorCode", 
-                (['out', 'retval'], wintypes.POINTER(comtypes.HRESULT)),
-            ),
-            # HRESULT Cancel();
-            comtypes.COMMETHOD(
-                [], wintypes.HRESULT, "Cancel"
-            ),
-            # HRESULT Close();
-            comtypes.COMMETHOD(
-                [], wintypes.HRESULT, "Close"
-            ),
-        ]
-
-    class IAsyncOperation(IAsyncInfo):
-        # See https://learn.microsoft.com/en-us/uwp/api/windows.foundation.iasyncoperation-1?view=winrt-22621
-        pass
-    
-    def make_typed_event_handler(iid, sender_class, args_class):
-        name = "ITypedEventHandler_%s_%s" % (sender_class.__name__, args_class.__name__) 
-        clazz = type(
-            name,
-            (comtypes.IUnknown,),
-            dict(
-                _iid_ = iid,
-                _case_insensitive_ = True,
-                _idlflags_ = [],
-                _methods_ = [
-                    # HRESULT Invoke([out, retval] unsigned __int32 *id);
-                    comtypes.COMMETHOD(
-                        [''], wintypes.HRESULT, "Invoke", 
-                        (['in'], sender_class),
-                        (['in'], args_class),
-                    ),
-                ]
-            )
-        )
-        return clazz
-    
-    # See https://learn.microsoft.com/en-us/windows/win32/api/eventtoken/ns-eventtoken-eventregistrationtoken
-    class EventRegistrationToken(ctypes.Structure):
-        _fields_ = [
-            ('value', ctypes.c_int64),
-        ]
-
-    IID_IPasswordCredential = comtypes.GUID("{6AB18989-C720-41A7-A6C1-FEADB36329A0}")
-    class IPasswordCredential(IInspectable):
-        """
-        [uuid(6AB18989-C720-41A7-A6C1-FEADB36329A0)]
-        [version(0x06020000)]
-        interface IPasswordCredential : IInspectable
-        {
-            [propget] HRESULT Resource([out] [retval] HSTRING* resource);
-            [propput] HRESULT Resource([in] HSTRING resource);
-            [propget] HRESULT UserName([out] [retval] HSTRING* userName);
-            [propput] HRESULT UserName([in] HSTRING userName);
-            [propget] HRESULT Password([out] [retval] HSTRING* password);
-            [propput] HRESULT Password([in] HSTRING password);
-            HRESULT RetrievePassword();
-            [propget] HRESULT Properties([out] [retval] Windows.Foundation.Collections.IPropertySet** props);
-        }
-        """
-        _iid_ = IID_IPasswordCredential
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT Resource([out] [retval] HSTRING* resource);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Resource", 
-                (['out', 'retval'], wintypes.POINTER(HSTRING)),
-            ),
-            # [propput] HRESULT Resource([in] HSTRING resource);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "Resource", 
-                (['in'], HSTRING),
-            ),
-            # [propget] HRESULT UserName([out] [retval] HSTRING* userName);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "UserName", 
-                (['out', 'retval'], wintypes.POINTER(HSTRING)),
-            ),
-            # [propput] HRESULT UserName([in] HSTRING userName);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "UserName", 
-                (['in'], HSTRING),
-            ),
-            # [propget] HRESULT Password([out] [retval] HSTRING* password);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Password", 
-                (['out', 'retval'], wintypes.POINTER(HSTRING)),
-            ),
-            # [propput] HRESULT Password([in] HSTRING password);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "Password", 
-                (['in'], HSTRING),
-            ),
-            # HRESULT RetrievePassword();
-            comtypes.COMMETHOD(
-                [], wintypes.HRESULT, "RetrievePassword"
-            ),
-            # [propget] HRESULT Properties([out] [retval] Windows.Foundation.Collections.IPropertySet** props);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Properties", 
-                # XXX This is actually IPropertySet**
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IInspectable))),
-            ),
-        ]
-
-    IID_IWiFiDirectLegacySettings = comtypes.GUID("{A64FDBBA-F2FD-4567-A91B-F5C2F5321057}")
-    class IWiFiDirectLegacySettings(IInspectable):
-        """
-        [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectLegacySettings)]
-        [uuid(A64FDBBA-F2FD-4567-A91B-F5C2F5321057)]
-        interface IWiFiDirectLegacySettings : IInspectable
-        {
-            [propget] HRESULT IsEnabled([out] [retval] boolean* value);
-            [propput] HRESULT IsEnabled([in] boolean value);
-            [propget] HRESULT Ssid([out] [retval] HSTRING* value);
-            [propput] HRESULT Ssid([in] HSTRING value);
-            [propget] HRESULT Passphrase([out] [retval] Windows.Security.Credentials.PasswordCredential** value);
-            [propput] HRESULT Passphrase([in] Windows.Security.Credentials.PasswordCredential* value);
-        }
-        """
-        _iid_ = IID_IWiFiDirectLegacySettings
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT IsEnabled([out] [retval] boolean* value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "IsEnabled", 
-                (['out', 'retval'], wintypes.POINTER(wintypes.BOOL)),
-            ),
-            # [propput] HRESULT IsEnabled([in] boolean value);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "IsEnabled", 
-                (['in'], wintypes.BOOL),
-            ),
-            # [propget] HRESULT Ssid([out] [retval] HSTRING* value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Ssid", 
-                (['out', 'retval'], wintypes.POINTER(HSTRING)),
-            ),
-            # [propput] HRESULT Ssid([in] HSTRING value);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "Ssid", 
-                (['in'], HSTRING),
-            ),
-
-            # [propget] HRESULT Passphrase([out] [retval] Windows.Security.Credentials.PasswordCredential** value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Passphrase", 
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IPasswordCredential))),
-            ),
-            # [propput] HRESULT Passphrase([in] Windows.Security.Credentials.PasswordCredential* value);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "Passphrase", 
-                (['in'], wintypes.POINTER(IPasswordCredential)),
-            ),
-        ]
-
-    IID_IWiFiDirectAdvertisement = comtypes.GUID("{AB511A2D-2A06-49A1-A584-61435C7905A6}")
-    class IWifiDirectAdvertisement(IInspectable):
-        """
-        [uuid(AB511A2D-2A06-49A1-A584-61435C7905A6)]
-        interface IWiFiDirectAdvertisement : IInspectable
-        {
-            [propget] HRESULT InformationElements([out] [retval] Windows.Foundation.Collections.IVector<Windows.Devices.WiFiDirect.WiFiDirectInformationElement*>** value);
-            [propput] HRESULT InformationElements([in] Windows.Foundation.Collections.IVector<Windows.Devices.WiFiDirect.WiFiDirectInformationElement*>* value);
-            [propget] HRESULT ListenStateDiscoverability([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementListenStateDiscoverability* value);
-            [propput] HRESULT ListenStateDiscoverability([in] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementListenStateDiscoverability value);
-            [propget] HRESULT IsAutonomousGroupOwnerEnabled([out] [retval] boolean* value);
-            [propput] HRESULT IsAutonomousGroupOwnerEnabled([in] boolean value);
-            [propget] HRESULT LegacySettings([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectLegacySettings** value);
-        }
-        """
-        _iid_ = IID_IWiFiDirectAdvertisement
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT InformationElements([out] [retval] Windows.Foundation.Collections.IVector<Windows.Devices.WiFiDirect.WiFiDirectInformationElement*>** value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "InformationElements", 
-                # XXX This is actually IVector<Windows.Devices.WiFiDirect.WiFiDirectInformationElement*>*
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IInspectable))),
-            ),
-            # [propput] HRESULT InformationElements([in] Windows.Foundation.Collections.IVector<Windows.Devices.WiFiDirect.WiFiDirectInformationElement*>* value);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "InformationElements", 
-                # XXX This is actually IVector<Windows.Devices.WiFiDirect.WiFiDirectInformationElement*>*
-                (['in'], wintypes.POINTER(IInspectable)),
-            ),
-            # [propget] HRESULT ListenStateDiscoverability([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementListenStateDiscoverability* value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "ListenStateDiscoverability", 
-                # XXX This is actually WiFiDirectAdvertisementListenStateDiscoverability 
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IInspectable))),
-            ),
-            #[propput] HRESULT ListenStateDiscoverability([in] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementListenStateDiscoverability value);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "ListenStateDiscoverability", 
-                # XXX This is actually WiFiDirectAdvertisementListenStateDiscoverability 
-                (['in'], wintypes.POINTER(IInspectable)),
-            ),
-            # [propget] HRESULT IsAutonomousGroupOwnerEnabled([out] [retval] boolean* value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "IsAutonomousGroupOwnerEnabled", 
-                (['out', 'retval'], wintypes.POINTER(wintypes.BOOL)),
-            ),
-            # [propput] HRESULT IsAutonomousGroupOwnerEnabled([in] boolean value);
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "IsAutonomousGroupOwnerEnabled", 
-                (['in'], wintypes.BOOL),
-            ),
-            # [propget] HRESULT LegacySettings([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectLegacySettings** value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "LegacySettings", 
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IWiFiDirectLegacySettings))),
-            ),
-        ]
-
-    class IWiFiDirectAdvertisementPublisherStatus(ENUM):
-        Created = 0
-        Started = 1
-        Stopped = 2
-        Aborted = 3
-
-    class IWiFiDirectError(ENUM):
-        Success           = 0
-        RadioNotAvailable = 1
-        ResourceInUse     = 2
-         
-    IID_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs = comtypes.GUID("{AAFDE53C-5481-46E6-90DD-32116518F192}")
-    class IWiFiDirectAdvertisementPublisherStatusChangedEventArgs(IInspectable):
-        """
-        [uuid(AAFDE53C-5481-46E6-90DD-32116518F192)]
-        [version(0x0A000000)]
-        interface IWiFiDirectAdvertisementPublisherStatusChangedEventArgs : IInspectable
-        {
-            [propget] HRESULT Status([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatus* value);
-            [propget] HRESULT Error([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectError* value);
-        }
-        """
-        _iid_ = IID_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT Status([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatus* value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Status",
-                ( ['out', 'retval'], wintypes.POINTER(IWiFiDirectAdvertisementPublisherStatus), "value" ),
-            ),
-            
-            # [propget] HRESULT Error([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectError* value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Error",
-                ( ['out', 'retval'], wintypes.POINTER(IWiFiDirectError), "value" ),
-            ),
-        ]
-    
-    """
-    MIDL_INTERFACE("de73cba7-370d-550c-b23a-53dd0b4e480d")
-    __FITypedEventHandler_2_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisher_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisherStatusChangedEventArgs : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Invoke( 
-            /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisher *sender,
-            /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisherStatusChangedEventArgs *e) = 0;
-        
-    };
-    """
-    # https://learn.microsoft.com/en-us/previous-versions/hh438424(v=vs.85)
-    # XXX Actually TypedEventHandler<IWiFiDirectAdvertisementPublisher*, WiFiDirectAdvertisementPublisherStatusChangedEventArgs*>
-    IID_ITypedEventHandler_IInspectable_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs = comtypes.GUID("{DE73CBA7-370D-550C-B23A-53DD0B4E480D}")
-    ITypedEventHandler_IInspectable_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs = make_typed_event_handler(
-        IID_ITypedEventHandler_IInspectable_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs,
-        wintypes.POINTER(IInspectable), 
-        wintypes.POINTER(IWiFiDirectAdvertisementPublisherStatusChangedEventArgs)
-    )
-    
-    IID_IWiFiDirectAdvertisementPublisher = comtypes.GUID("{B35A2D1A-9B1F-45D9-925A-694D66DF68EF}")
-    class IWiFiDirectAdvertisementPublisher(IInspectable):
-        """
-        [uuid(B35A2D1A-9B1F-45D9-925A-694D66DF68EF)]
-        [version(0x0A000000)]
-        interface IWiFiDirectAdvertisementPublisher : IInspectable
-        {
-            [propget] HRESULT Advertisement([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisement** value);
-            [propget] HRESULT Status([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatus* value);
-            [eventadd] HRESULT StatusChanged([in] Windows.Foundation.TypedEventHandler<Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher*, Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatusChangedEventArgs*>* handler, [out] [retval] EventRegistrationToken* token);
-            [eventremove] HRESULT StatusChanged([in] EventRegistrationToken token);
-            HRESULT Start();
-            HRESULT Stop();
-        }
-        """
-        _iid_ = IID_IWiFiDirectAdvertisementPublisher
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT Advertisement([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisement** value);
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Advertisement", 
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IWifiDirectAdvertisement))),
-            ),
-
-            # [propget] HRESULT Status([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatus* value);
-            
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Status", 
-                (['out', 'retval'], wintypes.POINTER(IWiFiDirectAdvertisementPublisherStatus)),
-            ),
-
-            # [eventadd] HRESULT StatusChanged([in] Windows.Foundation.TypedEventHandler<Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher*, Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatusChangedEventArgs*>* handler, [out] [retval] EventRegistrationToken* token);
-            # XXX see https://github.com/pywinrt/pywinrt/tree/main/projection#event-handlers
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'add_StatusChanged',
-                (['in'], ctypes.POINTER(ITypedEventHandler_IInspectable_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs), 'handler'),
-                (['out', 'retval'], wintypes.POINTER(EventRegistrationToken), 'token'),
-            ),
-            # [eventremove] HRESULT StatusChanged([in] EventRegistrationToken token);
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'remove_StatusChanged',
-                (['in'], EventRegistrationToken, 'handler'),
-            ),
-
-            # HRESULT Start();
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'Start'
-            ),
-
-            # HRESULT Stop();
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'Stop'
-            ),
-        ]
-
-        @property
-        def StatusChanged(self):
-            return self.StatusChangedHandler
-
-        @StatusChanged.setter
-        def StatusChanged(self, handler):
-            # type(ctypes.POINTER(ITypedEventHandler_IInspectable_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs)) -> None
-            self.StatusChangedToken = EventRegistrationToken()
-            
-            self.__com_add_StatusChanged(handler, ctypes.byref(self.StatusChangedHandler))
-            self.StatusChangedHandler = handler
-
-    # XXX Actually Windows.Devices.Enumeration.DeviceInformation
-    IID_IDeviceInformation = comtypes.GUID("{ABA0FB95-4398-489D-8E44-E6130927011F}")
-    class IDeviceInformation(IInspectable):
-        """
-        [uuid(ABA0FB95-4398-489D-8E44-E6130927011F)]
-        [version(0x06020000)]
-        interface IDeviceInformation : IInspectable
-        {
-            [propget] HRESULT Id([out] [retval] HSTRING* value);
-            [propget] HRESULT Name([out] [retval] HSTRING* value);
-            [propget] HRESULT IsEnabled([out] [retval] boolean* value);
-            [propget] HRESULT IsDefault([out] [retval] boolean* value);
-            [propget] HRESULT EnclosureLocation([out] [retval] Windows.Devices.Enumeration.EnclosureLocation** value);
-            [propget] HRESULT Properties([out] [retval] Windows.Foundation.Collections.IMapView<HSTRING, IInspectable*>** value);
-            HRESULT Update([in] Windows.Devices.Enumeration.DeviceInformationUpdate* updateInfo);
-            HRESULT GetThumbnailAsync([out] [retval] Windows.Foundation.IAsyncOperation<Windows.Devices.Enumeration.DeviceThumbnail*>** asyncOp);
-            HRESULT GetGlyphThumbnailAsync([out] [retval] Windows.Foundation.IAsyncOperation<Windows.Devices.Enumeration.DeviceThumbnail*>** asyncOp);
-        }
-
-        """
-        _iid_ = IID_IDeviceInformation
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT Id([out] [retval] HSTRING* value);
-            comtypes.COMMETHOD(
-                ['propget'], comtypes.HRESULT, 'Id',
-                (['out', 'retval'], wintypes.POINTER(HSTRING), 'result'),
-            ),
-            # XXX Missing the rest
-        ]
-        
-    
-    IID_IWiFiDirectConnectionRequest = comtypes.GUID("{8EB99605-914F-49C3-A614-D18DC5B19B43}")
-    class IWiFiDirectConnectionRequest(IInspectable):
-        """
-        [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectConnectionRequest)]
-        [uuid(8EB99605-914F-49C3-A614-D18DC5B19B43)]
-        [version(0x0A000000)]
-        interface IWiFiDirectConnectionRequest : IInspectable
-            requires
-                Windows.Foundation.IClosable
-        {
-            [propget] HRESULT DeviceInformation([out] [retval] Windows.Devices.Enumeration.DeviceInformation** value);
-        }
-        """
-        _iid_ = IID_IWiFiDirectConnectionRequest
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [propget] HRESULT DeviceInformation([out] [retval] Windows.Devices.Enumeration.DeviceInformation** value);
-            comtypes.COMMETHOD(
-                ['propget'], comtypes.HRESULT, 'DeviceInformation',
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IDeviceInformation)), 'result'),
-            ),
-        ]
-
-    IID_IWiFiDirectConnectionRequestedEventArgs = comtypes.GUID("{F99D20BE-D38D-484F-8215-E7B65ABF244C}")
-    class IWiFiDirectConnectionRequestedEventArgs(IInspectable):
-        """
-        [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectConnectionRequestedEventArgs)]
-        [uuid(F99D20BE-D38D-484F-8215-E7B65ABF244C)]
-        [version(0x0A000000)]
-        interface IWiFiDirectConnectionRequestedEventArgs : IInspectable
-        {
-            HRESULT GetConnectionRequest([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectConnectionRequest** result);
-        }
-        """
-        _iid_ = IID_IWiFiDirectConnectionRequestedEventArgs
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # HRESULT GetConnectionRequest([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectConnectionRequest** result);
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'GetConnectionRequest',
-                # XXX Actually WiFiDirectConnectionRequest**
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IWiFiDirectConnectionRequest)), 'result'),
-            ),
-        ]
-
-    """
-    template <>
-    struct __declspec(uuid("d04b0403-1fe2-532f-8e47-4823a14e624f"))
-    ITypedEventHandler<ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionListener*,ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionRequestedEventArgs*> : ITypedEventHandler_impl<ABI::Windows::Foundation::Internal::AggregateType<ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionListener*, ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionListener*>,ABI::Windows::Foundation::Internal::AggregateType<ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionRequestedEventArgs*, ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionRequestedEventArgs*>> 
-    {
-        static const wchar_t* z_get_rc_name_impl() 
-        {
-            return L"Windows.Foundation.TypedEventHandler`2<Windows.Devices.WiFiDirect.WiFiDirectConnectionListener, Windows.Devices.WiFiDirect.WiFiDirectConnectionRequestedEventArgs>"; 
-        }
-    };
-    """
-    IID_ITypedEventHandler_IInspectable_IWiFiDirectConnectionRequestedEventArgs = comtypes.GUID("{d04b0403-1fe2-532f-8e47-4823a14e624f}")
-    # XXX Actually TypedEventHandler<WiFiDirectConnectionListener*, WiFiDirectConnectionRequestedEventArgs*>
-    ITypedEventHandler_IInspectable_IWiFiDirectConnectionRequestedEventArgs = make_typed_event_handler(
-        IID_ITypedEventHandler_IInspectable_IWiFiDirectConnectionRequestedEventArgs,
-        wintypes.POINTER(IInspectable), 
-        wintypes.POINTER(IWiFiDirectConnectionRequestedEventArgs)
-    )
-
-    # interface IWiFiDirectConnectionListener : IInspectable
-    IID_IWiFiDirectConnectionListener = comtypes.GUID("{699C1B0D-8D13-4EE9-B9EC-9C72F8251F7D}")
-    class IWiFiDirectConnectionListener(IInspectable):
-        """
-        [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectConnectionListener)]
-        [uuid(699C1B0D-8D13-4EE9-B9EC-9C72F8251F7D)]
-        [version(0x0A000000)]
-        interface IWiFiDirectConnectionListener : IInspectable
-        {
-            [eventadd] HRESULT ConnectionRequested([in] Windows.Foundation.TypedEventHandler<Windows.Devices.WiFiDirect.WiFiDirectConnectionListener*, Windows.Devices.WiFiDirect.WiFiDirectConnectionRequestedEventArgs*>* handler, [out] [retval] EventRegistrationToken* token);
-            [eventremove] HRESULT ConnectionRequested([in] EventRegistrationToken token);
-        }
-        """
-        _iid_ = IID_IWiFiDirectConnectionListener
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [eventadd] HRESULT ConnectionRequested([in] Windows.Foundation.TypedEventHandler<Windows.Devices.WiFiDirect.WiFiDirectConnectionListener*, Windows.Devices.WiFiDirect.WiFiDirectConnectionRequestedEventArgs*>* handler, [out] [retval] EventRegistrationToken* token);
-            # XXX see https://github.com/pywinrt/pywinrt/tree/main/projection#event-handlers
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'add_ConnectionRequested',
-                (['in'], wintypes.POINTER(ITypedEventHandler_IInspectable_IWiFiDirectConnectionRequestedEventArgs), 'handler'),
-                (['out', 'retval'], wintypes.POINTER(EventRegistrationToken), 'token'),
-            ),
-            # [eventremove] HRESULT ConnectionRequested([in] EventRegistrationToken token);
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'remove_ConnectionRequested',
-                (['in'], EventRegistrationToken, 'token'),
-            ),
-        ]
-
-    IID_IWiFiDirectDevice = comtypes.GUID("{72DEAAA8-72EB-4DAE-8A28-8513355D2777}")
-    class IWiFiDirectDevice(IInspectable):
-        """
-        [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectDevice)]
-        [uuid(72DEAAA8-72EB-4DAE-8A28-8513355D2777)]
-        [version(0x06030000)]
-        interface IWiFiDirectDevice : IInspectable
-            requires
-                Windows.Foundation.IClosable
-        {
-            [propget] HRESULT ConnectionStatus([out] [retval] Windows.Devices.WiFiDirect.WiFiDirectConnectionStatus* value);
-            [propget] HRESULT DeviceId([out] [retval] HSTRING* value);
-            [eventadd] HRESULT ConnectionStatusChanged([in] Windows.Foundation.TypedEventHandler<Windows.Devices.WiFiDirect.WiFiDirectDevice*, IInspectable*>* handler, [out] [retval] EventRegistrationToken* token);
-            [eventremove] HRESULT ConnectionStatusChanged([in] EventRegistrationToken token);
-            HRESULT GetConnectionEndpointPairs([out] [retval] Windows.Foundation.Collections.IVectorView<Windows.Networking.EndpointPair*>** value);
-        }
-        """
-        _iid_ = IID_IWiFiDirectDevice
-        # XXX Implement
-        pass
-
-    IID_IAsyncOperation_IWiFiDirectDevice = comtypes.GUID("{dad01b61-a82d-566c-ba82-224c11500669}")
-    class IAsyncOperation_IWiFiDirectDevice(IInspectable):
-        """
-        MIDL_INTERFACE("dad01b61-a82d-566c-ba82-224c11500669")
-        __FIAsyncOperation_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice : public IInspectable
-        {
-        public:
-            virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Completed( 
-                /* [in] */ __RPC__in_opt __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice *handler) = 0;
-            
-            virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Completed( 
-                /* [retval][out] */ __RPC__deref_out_opt __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice **handler) = 0;
-            
-            virtual HRESULT STDMETHODCALLTYPE GetResults( 
-                /* [retval][out] */ __RPC__deref_out_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectDevice **results) = 0;
-            
-        };
-        """
-        _iid_ = IID_IAsyncOperation_IWiFiDirectDevice
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Completed( 
-            #   /* [in] */ __RPC__in_opt __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice *handler) = 0;
-            comtypes.COMMETHOD(
-                ['propput'], wintypes.HRESULT, "Completed", 
-                # XXX Actually IAsyncOperation_WiFiDirectDevice
-                (['in'], wintypes.POINTER(IAsyncOperation), "handler"),
-            ),
-            # virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Completed( 
-            #   /* [retval][out] */ __RPC__deref_out_opt __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice **handler) = 0;
-            comtypes.COMMETHOD(
-                ['propget'], wintypes.HRESULT, "Completed", 
-                # XXX Actually IAsyncOperationCompletedHandler_WiFiDirectDevice
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IAsyncOperation))),
-            ),
-            # virtual HRESULT STDMETHODCALLTYPE GetResults( 
-            #   /* [retval][out] */ __RPC__deref_out_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectDevice **results) = 0;
-            comtypes.COMMETHOD(
-                [], wintypes.HRESULT, "GetResults",
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IWiFiDirectDevice))),
-
-            ),
-        ]
-
-    """
-    MIDL_INTERFACE("d34abe17-fb19-57be-bc41-0eb83dea151c")
-    __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Invoke( 
-            /* [in] */ __RPC__in_opt __FIAsyncOperation_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice *asyncInfo,
-            /* [in] */ AsyncStatus status) = 0;
-        
-    };
-    """
-    IID_IAsyncOperationCompletedHandler_WiFiDirectDevice = comtypes.GUID("{d34abe17-fb19-57be-bc41-0eb83dea151c}")
-    IAsyncOperationCompletedHandler_WiFiDirectDevice = make_typed_event_handler(
-        IID_IAsyncOperationCompletedHandler_WiFiDirectDevice,
-        wintypes.POINTER(IAsyncOperation_IWiFiDirectDevice),
-        AsyncStatus
-    )
-
-    IID_IWiFiDirectDeviceStatics = comtypes.GUID("{E86CB57C-3AAC-4851-A792-482AAF931B04}")
-    class IWiFiDirectDeviceStatics(IInspectable):
-        """
-        [exclusiveto(Windows.Devices.WiFiDirect.WiFiDirectDevice)]
-        [uuid(E86CB57C-3AAC-4851-A792-482AAF931B04)]
-        [version(0x06030000)]
-        interface IWiFiDirectDeviceStatics : IInspectable
-        {
-            [overload("GetDeviceSelector")] HRESULT GetDeviceSelector([out] [retval] HSTRING* deviceSelector);
-            [overload("FromIdAsync")] HRESULT FromIdAsync([in] HSTRING deviceId, [out] [retval] Windows.Foundation.IAsyncOperation<Windows.Devices.WiFiDirect.WiFiDirectDevice*>** asyncOp);
-        }
-        """
-        _iid_ = IID_IWiFiDirectDeviceStatics
-        _case_insensitive_ = True
-        _idlflags_ = []
-        _methods_ = [
-            # [overload("GetDeviceSelector")] HRESULT GetDeviceSelector([out] [retval] HSTRING* deviceSelector);
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'GetDeviceSelector',
-                (['out', 'retval'], wintypes.POINTER(HSTRING), 'deviceSelector'),
-            ),
-            # [overload("FromIdAsync")] HRESULT FromIdAsync([in] HSTRING deviceId, [out] [retval] Windows.Foundation.IAsyncOperation<Windows.Devices.WiFiDirect.WiFiDirectDevice*>** asyncOp);
-            comtypes.COMMETHOD(
-                [], comtypes.HRESULT, 'FromIdAsync',
-                (['in'], HSTRING, 'deviceId'),
-                (['out', 'retval'], wintypes.POINTER(wintypes.POINTER(IAsyncOperation_IWiFiDirectDevice)), 'asyncOp'),
-            ),
-        ]
-
-    # See https://gist.github.com/olafhartong/980e9cd51925ff06a5a3fdfb24fb96c2 for a list of clsids
-
-    # See https://learn.microsoft.com/en-us/uwp/api/windows.foundation.typedeventhandler-2?view=winrt-22621
-    # GUID((2648818996, 27361, 4576, 132, 225, 24, 169, 5, 188, 197, 63))
-    # This asks for
-    # - INoMarshall {ECC8691B-C1DB-4DC0-855E-65F6C551AF49}
-    # - ??????      {00000039-0000-0000-C000-000000000046}
-    # - IdentityUnmarshal {0000001B-0000-0000-C000-000000000046}
-    # - IAgileObject {94EA2B94-E9CC-49E0-C0FF-EE64CA8F5B90}
-    # And once publisher.Start() is called it asks for
-    # - ITypedEventHandler {DE73CBA7-370D-550C-B23A-53DD0B4E480D}
-    class IAsyncOperationCompletedHandler_Impl(comtypes.COMObject):
-        def __init__(self):
-            super(IAsyncOperationCompletedHandler_Impl, self).__init__()
-
-        def IInspectable_GetIids(self, this, iidCount, iids):
-            # XXX Untested
-            logger.info("")
-            ifaces = []
-            for iface in self._com_interfaces_:
-                if iface not in [IInspectable, IUnknown]:
-                    ifaces.append(iface._iid_)
-            
-            pv = combase.CoTaskMemAlloc(len(ifaces) * 4)
-            iids.content = pv
-            iidCount.content = len(ifaces)
-            return comtypes.hresult.S_OK
-
-        def IInspectable_GetRuntimeClassName(self, this):
-            logger.info("")
-            return comtypes.hresult.E_NOTIMPL
-
-        def IInspectable_GetTrustLevel(self, this):
-            logger.info("")
-            return comtypes.hresult.E_NOTIMPL
-
-        def IAsyncInfo_Cancel(self, this):
-            logger.info("")
-            return comtypes.hresult.E_NOTIMPL
-
-        def IAsyncInfo_Close(self, this):
-            logger.info("")
-            return comtypes.hresult.E_NOTIMPL
-
-        def IAsyncOperation_Cancel(self, this):
-            logger.info("")
-            return comtypes.hresult.E_NOTIMPL
-
-        def IAsyncOperation_Close(self, this):
-            logger.info("")
-            return comtypes.hresult.E_NOTIMPL
-
-    class PublisherStatusChangedHandler(IAsyncOperationCompletedHandler_Impl):
-        """
-        MIDL_INTERFACE("de73cba7-370d-550c-b23a-53dd0b4e480d")
-        __FITypedEventHandler_2_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisher_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisherStatusChangedEventArgs : public IUnknown
-        {
-        public:
-            virtual HRESULT STDMETHODCALLTYPE Invoke( 
-                /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisher *sender,
-                /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisherStatusChangedEventArgs *e) = 0;
-            
-        };
-        """
-        # See https://svn.python.org/projects/ctypes/tags/comtypes-0.3.2/docs/com_interfaces.html
-        _com_interfaces_ = [
-            IAsyncOperation,
-            IInspectable,
-            IAgileObject,
-            ITypedEventHandler_IInspectable_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs,
-        ]
-        # XXX Allow passing a callback instead of having to create a class?
-        def Invoke(self, this, sender, args):
-            logger.info("sender %r args %r", sender, args)
-            logger.info("status %s", args.Status.value)
-            if (args.Status.value == IWiFiDirectAdvertisementPublisherStatus.Created):
-                logger.info("Publisher started, should start created")
-
-            elif (args.Status.value == IWiFiDirectAdvertisementPublisherStatus.Started):
-                logger.info("Publisher started, should start listener")
-            
-            elif (args.Status.value == IWiFiDirectAdvertisementPublisherStatus.Aborted):
-                logger.info("Publisher aborted")
-
-            elif (args.Status.value == IWiFiDirectAdvertisementPublisherStatus.Stopped):
-                logger.info("Publisher stopped")
-                
-            return comtypes.hresult.S_OK
-
-
-    class ConnectionAcceptedCompletedHandler(IAsyncOperationCompletedHandler_Impl):
-        """
-        MIDL_INTERFACE("d34abe17-fb19-57be-bc41-0eb83dea151c")
-        __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice : public IUnknown
-        {
-        public:
-            virtual HRESULT STDMETHODCALLTYPE Invoke( 
-                /* [in] */ __RPC__in_opt __FIAsyncOperation_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice *asyncInfo,
-                /* [in] */ AsyncStatus status) = 0;
-            
-        };
-        """
-        # See https://svn.python.org/projects/ctypes/tags/comtypes-0.3.2/docs/com_interfaces.html
-        _com_interfaces_ = [
-            IAsyncOperation,
-            IInspectable,
-            IAgileObject,
-            IAsyncOperationCompletedHandler_WiFiDirectDevice,
-        ]
-        # XXX Allow passing a callback instead of having to create a class?
-        def Invoke(self, this, sender, args):
-            logger.info("sender %r args %r", sender, args)
-            logger.info("status %s", args.value)
-
-            if (args.value == AsyncStatus.Completed):
-                logger.info("Completed")
-                
-                # hr = pHandler->GetResults(wfdDevice.GetAddressOf());
-                wfdDevice = wintypes.POINTER(IWiFiDirectDevice)()
-                sender._IAsyncOperation_IWiFiDirectDevice__com_GetResults(ctypes.byref(wfdDevice))
-                
-
-                # XXX Missing Implementing
-                # hr = wfdDevice->GetConnectionEndpointPairs(endpointPairs.GetAddressOf());
-                # hr = endpointPairs->GetAt(0, endpointPair.GetAddressOf());
-                # hr = endpointPair->get_RemoteHostName(remoteHostName.GetAddressOf());
-                # hr = remoteHostName->get_DisplayName(remoteHostNameDisplay.GetAddressOf());
-                # EventRegistrationToken statusChangedToken;
-                # hr = wfdDevice->add_ConnectionStatusChanged(Callback<ConnectionStatusChangedHandler>([this](IWiFiDirectDevice* sender, IInspectable*) -> HRESULT
-                # ...
-
-
-            elif (args.value == AsyncStatus.Started):
-                logger.info("Started")
-            elif (args.value == AsyncStatus.Canceled):
-                logger.info("Canceled")
-            elif (args.value == AsyncStatus.Error):
-                logger.info("Error")
-
-
-            return comtypes.hresult.S_OK
-
-    
-    class ConnectionRequestedHandler(IAsyncOperationCompletedHandler_Impl):
-        """
-        MIDL_INTERFACE("d04b0403-1fe2-532f-8e47-4823a14e624f")
-        __FITypedEventHandler_2_Windows__CDevices__CWiFiDirect__CWiFiDirectConnectionListener_Windows__CDevices__CWiFiDirect__CWiFiDirectConnectionRequestedEventArgs : public IUnknown
-        {
-        public:
-            virtual HRESULT STDMETHODCALLTYPE Invoke( 
-                /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionListener *sender,
-                /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionRequestedEventArgs *e) = 0;
-            
-        };
-        """
-        # See https://svn.python.org/projects/ctypes/tags/comtypes-0.3.2/docs/com_interfaces.html
-        _com_interfaces_ = [
-            IAsyncOperation,
-            IInspectable,
-            IAgileObject,
-            ITypedEventHandler_IInspectable_IWiFiDirectConnectionRequestedEventArgs,
-        ]
-        # XXX Allow passing a callback instead of having to create a class?
-        def Invoke(self, this, sender, args):
-            logger.info("sender %r args %r", sender, args)
-            # hr = args->GetConnectionRequest(request.GetAddressOf());
-            request = ctypes.POINTER(IWiFiDirectConnectionRequest)()
-            args._IWiFiDirectConnectionRequestedEventArgs__com_GetConnectionRequest(ctypes.byref(request))
-            
-            # hr = request->get_DeviceInformation(deviceInformation.GetAddressOf());
-            deviceInformation = ctypes.POINTER(IDeviceInformation)()
-            request._IWiFiDirectConnectionRequest__com__get_DeviceInformation(ctypes.byref(deviceInformation))
-
-            # hr = GetActivationFactory(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectDevice).Get(), &wfdStatics);
-            wfdStatics = ctypes.POINTER(IWiFiDirectDeviceStatics)()
-            RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectDevice = HString("Windows.Devices.WiFiDirect.WiFiDirectDevice")
-            hr = combase.RoGetActivationFactory(
-                RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectDevice, 
-                ctypes.byref(IID_IWiFiDirectDeviceStatics), 
-                ctypes.byref(wfdStatics)
-            )
-            check_hresult(hr)
-
-            # hr = deviceInformation->get_Id(deviceId.GetAddressOf());
-            deviceId = HSTRING()
-            deviceInformation._IDeviceInformation__com__get_Id(ctypes.byref(deviceId))
-
-            # hr = wfdStatics->FromIdAsync(deviceId.Get(), &asyncAction);
-            asyncAction = ctypes.POINTER(IAsyncOperation_IWiFiDirectDevice)()
-            wfdStatics._IWiFiDirectDeviceStatics__com_FromIdAsync(deviceId, ctypes.byref(asyncAction))
-
-            # hr = asyncAction->put_Completed(Callback<FromIdAsyncHandler>([this](IAsyncOperation<WiFiDirectDevice*>* pHandler, AsyncStatus status) -> HRESULT
-            handler = ConnectionAcceptedCompletedHandler().QueryInterface(IAsyncOperationCompletedHandler_WiFiDirectDevice)
-            asyncAction._IAsyncOperation_IWiFiDirectDevice__com__set_Completed(handler)
-
-            return comtypes.hresult.S_OK
-
 
     combase=ctypes.WinDLL('combase.dll')
     # See https://stackoverflow.com/questions/16466641/how-to-declare-and-link-to-roinitialize-rouninitialize-rogetactivationfactory-an
@@ -2330,53 +1589,160 @@ def winrt_wifi():
     #hr = combase.RoInitialize(RO_INIT_SINGLETHREADED)
     logger.info("RoInitialize %r", hex(hr))
 
-    Windows_Devices_WiFiDirect_WiFiDirectAdvertisementPublisher = HString("Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher")
-    inspectable = wintypes.POINTER(IInspectable)()
-    hr = combase.RoActivateInstance(
-        Windows_Devices_WiFiDirect_WiFiDirectAdvertisementPublisher,
-        ctypes.byref(inspectable)
-    )
-    check_hresult(hr)
-    logger.info("RoActivateInstance 0x%x", hr)
-    publisher = inspectable.QueryInterface(IWiFiDirectAdvertisementPublisher)
-    inspectable.Release()
+    connected_devices = {}
+    connection_listener = None
+
+    def on_publisher_status_changed(sender, args):
+        global connection_listener 
+        #type:(IWiFiDirectAdvertisementPublisher, IWiFiDirectAdvertisementPublisherStatusChangedEventArgs) -> comtypes.HRESULT
+        logger.info("sender %r args %s", sender, args)
+        # XXX Fix the wrapper so it returns the ENUM value directly
+        if (args.Status.value == WiFiDirectAdvertisementPublisherStatus.Created):
+            logger.info("Created")
+        
+        elif (args.Status.value == WiFiDirectAdvertisementPublisherStatus.Started):
+            logger.info("Started")
+            # XXX Missing stopping connection_listener on stopped/abort/exception?
+            connection_listener = start_listener()
+
+        elif (args.Status.value == WiFiDirectAdvertisementPublisherStatus.Stopped):
+            logger.info("Stopped")
+
+        else:
+            logger.info("Unhandled status %d", args.Status.value)
+
+        return comtypes.hresult.S_OK
+
+    def on_connection_status_changed(sender, args):
+        logger.info("sender %r args %r", sender, args)
+
+        # hr = sender->get_ConnectionStatus(&status);
+        status = sender.ConnectionStatus
+
+        if (status.value == WiFiDirectConnectionStatus.Connected):
+            logger.info("Connected")
+            print "Connected", HString(sender.DeviceId)
+        
+        elif (status.value == WiFiDirectConnectionStatus.Disconnected):
+            logger.info("Disconnected")
+            print "Disconnected", HString(sender.DeviceId)
+
+            # hr = sender->get_DeviceId(deviceId.GetAddressOf());
+            deviceId = str(HString(sender.DeviceId))
+            logger.info("DeviceId %s", deviceId)
+
+            # auto itDevice = _connectedDevices.find(deviceId.GetRawBuffer(nullptr));
+            # auto itToken = _connectedDeviceStatusChangedTokens.find(deviceId.GetRawBuffer(nullptr));
+            # if (itToken != _connectedDeviceStatusChangedTokens.end())
+            # {
+            #    if (itDevice != _connectedDevices.end())
+            #    {
+            #        itDevice->second->remove_ConnectionStatusChanged(itToken->second);
+            #    }
+            #    _connectedDeviceStatusChangedTokens.erase(itToken);
+            # }
+            # if (itDevice != _connectedDevices.end())
+            # {
+            #    _connectedDevices.erase(itDevice);
+            # }
+            wfdDevice = connected_devices.pop(deviceId)
+            wfdDevice.OnConnectionStatusChanged = None
+
+        return comtypes.hresult.S_OK
+
+    def on_connection_completed(sender, args):
+        logger.info("sender %r args %s", sender, args)
+
+        logger.info("status %s", args.value)
+
+        if (args.value == AsyncStatus.Completed):
+            logger.info("Completed")
+            
+            # hr = pHandler->GetResults(wfdDevice.GetAddressOf());
+            wfdDevice = sender.GetResults()
+            deviceId = str(HString(wfdDevice.DeviceId))
+            logger.info("Device Id %s", deviceId)
+            print "Connection completed", HString(wfdDevice.DeviceId)
+
+            # XXX Missing Implementing
+            # hr = wfdDevice->GetConnectionEndpointPairs(endpointPairs.GetAddressOf());
+            # hr = endpointPairs->GetAt(0, endpointPair.GetAddressOf());
+            # hr = endpointPair->get_RemoteHostName(remoteHostName.GetAddressOf());
+            # hr = remoteHostName->get_DisplayName(remoteHostNameDisplay.GetAddressOf());
+
+            # EventRegistrationToken statusChangedToken;
+            # hr = wfdDevice->add_ConnectionStatusChanged(Callback<ConnectionStatusChangedHandler>([this](IWiFiDirectDevice* sender, IInspectable*) -> HRESULT
+            wfdDevice.OnConnectionStatusChanged = on_connection_status_changed
+
+            # hr = wfdDevice->get_DeviceId(deviceId.GetAddressOf());
+            # _connectedDevices.insert(std::make_pair(deviceId.GetRawBuffer(nullptr), wfdDevice));
+            # _connectedDeviceStatusChangedTokens.insert(std::make_pair(deviceId.GetRawBuffer(nullptr), statusChangedToken));
+            connected_devices[deviceId] = wfdDevice
+
+        elif (args.value == AsyncStatus.Started):
+            logger.info("Started")
+            
+        elif (args.value == AsyncStatus.Canceled):
+            logger.info("Canceled")
+
+        elif (args.value == AsyncStatus.Error):
+            logger.info("Error")
+
+        return comtypes.hresult.S_OK
+
+    def on_connection_requested(sender, args):
+        #type:(IWiFiDirectAdvertisementPublisher, IWiFiDirectAdvertisementPublisherStatusChangedEventArgs) -> comtypes.HRESULT
+        logger.info("sender %r args %s", sender, args)
+
+        # hr = args->GetConnectionRequest(request.GetAddressOf());
+        # hr = request->get_DeviceInformation(deviceInformation.GetAddressOf());
+        connection_request = wintypes.POINTER(WiFiDirectConnectionRequest)()
+        # XXX Fix comtypes passing self which forces to use the classmethod
+        args._IWiFiDirectConnectionRequestedEventArgs__com_GetConnectionRequest(ctypes.byref(connection_request))
+        device_information = connection_request.DeviceInformation
+
+        logger.info("device id %s", HString(device_information.Id))
+        
+        # hr = GetActivationFactory(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectDevice).Get(), &wfdStatics);
+        wfd_statics = IWiFiDirectDeviceStatics_s()
+        # hr = deviceInformation->get_Id(deviceId.GetAddressOf());
+        # hr = wfdStatics->FromIdAsync(deviceId.Get(), &asyncAction);
+        async_action = wfd_statics.FromIdAsync(device_information.Id)
+        # hr = asyncAction->put_Completed(Callback<FromIdAsyncHandler>([this](IAsyncOperation<WiFiDirectDevice*>* pHandler, AsyncStatus status) -> HRESULT
+        async_action.OnCompleted = on_connection_completed
+
+        return comtypes.hresult.S_OK
+
+    def start_listener():
+        logger.info("")
+        # hr = Windows::Foundation::ActivateInstance(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectConnectionListener).Get(), &_connectionListener);
+        connection_listener = WiFiDirectConnectionListener()
+        # hr = _connectionListener->add_ConnectionRequested(
+        #   Callback<ConnectionRequestedHandler>([this](IWiFiDirectConnectionListener* sender, IWiFiDirectConnectionRequestedEventArgs* args) -> HRESULT
+        connection_listener.OnConnectionRequested = on_connection_requested
+
+        # Local variable going out of scope will call __del__ and cause Release(),
+        # AddRef to counter that
+        # XXX Is there a way so comtypes doesn't Release local variables when they
+        #     are returned from the function? Does this also happen if local var is
+        #     set to None? (can't do here since it's the return value, though)
+        connection_listener.AddRef()
+
+        return connection_listener
+
+    # hr = Windows::Foundation::ActivateInstance(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectAdvertisementPublisher).Get(), &_publisher);
+    publisher = WiFiDirectAdvertisementPublisher()
 
     # hr = _publisher->add_StatusChanged(
     #   Callback<StatusChangedHandler>([this](IWiFiDirectAdvertisementPublisher* sender, IWiFiDirectAdvertisementPublisherStatusChangedEventArgs* args) -> HRESULT
-    status_changed_token = EventRegistrationToken()
-    handler = PublisherStatusChangedHandler().QueryInterface(ITypedEventHandler_IInspectable_IWiFiDirectAdvertisementPublisherStatusChangedEventArgs)
-    hr = publisher._IWiFiDirectAdvertisementPublisher__com_add_StatusChanged(handler, ctypes.byref(status_changed_token))
-    check_hresult(hr)
-    logger.info("add_StatusChanged %r %r", hex(hr), status_changed_token)
-
-    
+    publisher.OnStatusChanged = on_publisher_status_changed
+    # hr = _advertisement->put_IsAutonomousGroupOwnerEnabled(true);
+    publisher.Advertisement.IsAutonomousGroupOwnerEnabled = True
     # hr = _publisher->get_Advertisement(_advertisement.GetAddressOf());
-    advertisement = ctypes.POINTER(IWifiDirectAdvertisement)()
-    hr = publisher._IWiFiDirectAdvertisementPublisher__com__get_Advertisement(ctypes.byref(advertisement))
-    check_hresult(hr)
-    logger.info("Advertisement %r", hex(hr))
-
-    hr = advertisement._IWifiDirectAdvertisement__com__set_IsAutonomousGroupOwnerEnabled(True)
-    check_hresult(hr)
-    logger.info("set_IsAutonomousGroupOwnerEnabled %r", hex(hr))
-
     # hr = _advertisement->get_LegacySettings(_legacySettings.GetAddressOf());
-    legacy_settings = ctypes.POINTER(IWiFiDirectLegacySettings)()
-    hr = advertisement._IWifiDirectAdvertisement__com__get_LegacySettings(ctypes.byref(legacy_settings))
-    check_hresult(hr)
-    logger.info("get_LegacySettings %r", hex(hr))
-
     # hr = _legacySettings->put_IsEnabled(true);
-    enabled = wintypes.BOOL()
-    hr = legacy_settings._IWiFiDirectLegacySettings__com__get_IsEnabled(ctypes.byref(enabled))
-    check_hresult(hr)
-    logger.info("get_IsEnabled %r %r", hex(hr), enabled)
-    hr = legacy_settings._IWiFiDirectLegacySettings__com__set_IsEnabled(True)
-    check_hresult(hr)
-    logger.info("set_IsEnabled %r", hex(hr))
-    hr = legacy_settings._IWiFiDirectLegacySettings__com__get_IsEnabled(ctypes.byref(enabled))
-    check_hresult(hr)
-    logger.info("get_IsEnabled %r %r", hex(hr), enabled)
+    legacy_settings = publisher.Advertisement.LegacySettings
+    legacy_settings.IsEnabled = True
 
     ssid = None
     password = None
@@ -2384,112 +1750,60 @@ def winrt_wifi():
     try:
         with open(config_filepath, "r") as f:
             ssid, password = [HString(line.strip()) for line in f.readlines()]
-
+            
     except:
         logger.warn("Error reading %s, will use random ssid and password", config_filepath)
 
     # hr = _legacySettings->put_Ssid(hstrSSID.Get());
     if (ssid is None):
-        ssid = HString()
-        hr = legacy_settings._IWiFiDirectLegacySettings__com__get_Ssid(ctypes.byref(ssid))
-        check_hresult(hr)
-        logger.info("get_Ssid %r %r", hex(hr), ssid)
-
+        ssid = HString(legacy_settings.Ssid)
+        
     else:
-        hr = legacy_settings._IWiFiDirectLegacySettings__com__set_Ssid(ssid)
-        check_hresult(hr)
-        logger.info("set_Ssid %r", hex(hr))
-        hr = legacy_settings._IWiFiDirectLegacySettings__com__get_Ssid(ctypes.byref(ssid))
-        check_hresult(hr)
-        logger.info("get_Ssid %r %r", hex(hr), ssid)
+        legacy_settings.Ssid = ssid
 
     # hr = _legacySettings->get_Passphrase(passwordCredential.GetAddressOf());
-    password_credential = ctypes.POINTER(IPasswordCredential)()
-    hr = legacy_settings._IWiFiDirectLegacySettings__com__get_Passphrase(ctypes.byref(password_credential))
-    check_hresult(hr)
-    logger.info("get_Passphrase %r", hex(hr))
-
     # hr = passwordCredential->put_Password(hstrPassphrase.Get());
-    
     if (password is None):
-        password = HString()
-        hr = password_credential._IPasswordCredential__com__get_Password(ctypes.byref(password))
-        check_hresult(hr)
-        logger.info("get_Password %r %r", hex(hr), password)
-    
+        password = HString(legacy_settings.Passphrase.Password)
+        
     else:
-        hr = password_credential._IPasswordCredential__com__set_Password(password)
-        check_hresult(hr)
-        logger.info("set_Password %r %r", hex(hr), password)
-        hr = password_credential._IPasswordCredential__com__get_Password(ctypes.byref(password))
-        check_hresult(hr)
-        logger.info("get_Password %r %r", hex(hr), password)
-
-    def start_listener():
-        logger.info("start_listener")
-        # hr = Windows::Foundation::ActivateInstance(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectConnectionListener).Get(), &_connectionListener);
-        connection_listener = wintypes.POINTER(IWiFiDirectConnectionListener)()
-        Windows_Devices_WiFiDirect_WiFiDirectConnectionListener = HString("Windows.Devices.WiFiDirect.WiFiDirectConnectionListener")
-        inspectable = wintypes.POINTER(IInspectable)()
-        hr = combase.RoActivateInstance(
-            Windows_Devices_WiFiDirect_WiFiDirectConnectionListener,
-            ctypes.byref(inspectable)
-        )
-        logger.info("RoActivateInstance %r", hex(hr))
-
-        connection_listener = inspectable.QueryInterface(IWiFiDirectConnectionListener)
-        inspectable.Release()
-
-        listener_token = EventRegistrationToken()
-        handler = ConnectionRequestedHandler().QueryInterface(ITypedEventHandler_IInspectable_IWiFiDirectConnectionRequestedEventArgs)
-        hr = connection_listener._IWiFiDirectConnectionListener__com_add_ConnectionRequested(handler, ctypes.byref(listener_token))
-        check_hresult(hr)
-        logger.info("add_ConnectionRequested %r %r", hex(hr), listener_token)
-
-        # Local variable going out of scope will call __del__ and cause
-        # Release(), so AddRef 
-        # XXX Is there a way so comtypes doesn't Release local variables when
-        #     they are returned from the function?
-        connection_listener.AddRef()
-        return connection_listener, listener_token
-
-    # hr = _publisher->Start();
-    # This causes a QuerInterface for ITypedEventHandler {DE73CBA7-370D-550C-B23A-53DD0B4E480D}
-    # on IAsyncOperationCompletedHandler_Impl
+        legacy_settings.Passphrase.Password = password
+        
     logger.info("Starting publisher")
-    hr = publisher.Start()
-    check_hresult(hr)
-    logger.info("Started publisher %r", hex(hr))
-
-    import time
-    logger.info("Sleeping")
-    time.sleep(1)
-
-    connection_listener, listener_token = start_listener()
+    # hr = _publisher->Start();
+    # This causes a QueryInterface for ITypedEventHandler {DE73CBA7-370D-550C-B23A-53DD0B4E480D}
+    # on AsyncOperationHandler
+    publisher.Start()
+    logger.info("Started publisher")
 
     try:
+        print "Sleeping forever, ssid '%s' password '%s' press ctrl+c to finish" % (ssid, password)
         while (True):
-            print "Sleeping forever, ssid '%s' password '%s' press ctrl+c to finish" % (ssid, password)
-            time.sleep(60*500)
+            time.sleep(50)
+
     finally:
-        logger.info("Stopping listener")
-        hr = connection_listener._IWiFiDirectConnectionListener__com_remove_ConnectionRequested(listener_token)
-        check_hresult(hr)
-        logger.info("Removed ConnectionRequested %r %r", hex(hr), listener_token)
-        
         logger.info("Stopping publisher")
-        hr = publisher.Stop()
-        check_hresult(hr)
-        logger.info("Stopped publisher %r", hex(hr))
-
-        publisher._IWiFiDirectAdvertisementPublisher__com_remove_StatusChanged(status_changed_token)
-        logger.info("Removed StatusChanged %r", status_changed_token)
-
-
+        publisher.Stop()
+        # XXX There's no cleanup needed as long as objects are not extra
+        #     AddRef'd and references are eventually del'ed since __del__ will
+        #     uninstall the respective handlers. Should this set some event
+        #     handlers to None explicitly for cleanliness? (right now __del__
+        #     may be called eg after the logger has been torn down so any
+        #     logging there fails with None accesses)
+        if (connection_listener is not None):
+            connection_listener.OnConnectionRequested = None
+        publisher.OnStatusChanged = None
+            
+        logger.info("Done")
+    
+    
 if (__name__ == "__main__"):
-    comtypes_logger.setLevel(logging.WARNING)
-    logger.setLevel(logging.WARNING)
+    log_level = logging.WARNING
+    #log_level = logging.INFO
 
+    comtypes_logger.setLevel(log_level)
+    wrtc_logger.setLevel(log_level)
+    logger.setLevel(log_level)
     #write_python_from_idls()
     winrt_wifi()
 
