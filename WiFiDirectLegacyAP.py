@@ -203,6 +203,8 @@ comtypes_logger.setLevel(logging.DEBUG)
 #     See https://stackoverflow.com/questions/19561058/duplicate-output-in-simple-python-logging-configuration/19561320#19561320
 comtypes_logger.propagate = False
 
+# Note all interface files use the logger object from wrtcommon since they
+# import * and don't create its own
 wrtc_logger = logging.getLogger("wrtcommon")
 setup_logger(wrtc_logger)
 wrtc_logger.setLevel(logging.DEBUG)
@@ -277,6 +279,23 @@ def parse_interface_or_enum(f, namespaces):
     }
 
     """
+    def array_to_guid(a):
+        assert len(a) == 11, "Unexpected length %d" % len(a)
+        
+        data1, data2, data3, data4 = a[0], a[1], a[2], a[3:]
+
+        s = "%08X-%04X-%04X-%s-%s" % (
+            data1,
+            data2,
+            data3,
+            # https://devblogs.microsoft.com/oldnewthing/20220928-00/?p=107221
+            string.join(["%02X" % b for b in data4[:2]], ""),
+            string.join(["%02X" % b for b in data4[2:]], ""),
+        )
+        logger.info("array_to_guid %s %s", a, s)
+
+        return s
+
     inside_braces = False
     interface = None
     enum = None
@@ -314,10 +333,12 @@ def parse_interface_or_enum(f, namespaces):
             continue
 
         elif (inside_braces and (enum is not None)):
-            m = re.match(r"\s*(?P<name>\w+)\s*=\s*(?P<value>\d+),?", l)
+            m = re.match(r"\s*(?P<name>\w+)\s*=\s*(?P<value>(0x)?\d+),?", l)
             if (m is not None):
                 lines.append(l)
-                enum_values[m.group("name")] = int(m.group("value"))
+                value = m.group("value")
+                value =  int(value, 16) if (value.startswith("0x")) else int(value)
+                enum_values[m.group("name")] = value
 
         elif (inside_braces and (runtime_class is not None)):
             # [default] interface Windows.Devices.WiFiDirect.IWiFiDirectConnectionParameters;
@@ -375,7 +396,7 @@ def parse_interface_or_enum(f, namespaces):
                 (\[\s*default_overload\s*\]\s*)?
                 (\[\s*(?P<method_flag>eventadd|eventremove|propget|propput|overload\s*\(\s*[^)]*\))\s*\])?\s*
                 (?P<return_type>[a-zA-Z0-9_.*<>,]+)\s* (?P<method_name>\w+)\s*
-                \(
+                \(\s*
                     (?P<all_params>(
                         (?P<all_param_flags>(\[\s*
                             (
@@ -393,7 +414,7 @@ def parse_interface_or_enum(f, namespaces):
                         ,?
                         \s*
                     )*)
-                \)\s*;\s*
+                \s*\)\s*;\s*
                 """, 
                 l, 
                 re.VERBOSE
@@ -462,7 +483,12 @@ def parse_interface_or_enum(f, namespaces):
                 if (interface is None):
                     interface = {}
                     lines = []
-                interface.update({ "uuid": m.group(1) })
+                uuid = m.group(1)
+                # Support both array of ints and dash-separated hex data 
+                ll = uuid.split(",")
+                if (len(ll) > 1):
+                    uuid = array_to_guid([int(s) for s in ll])
+                interface.update({ "uuid": uuid })
                 lines.append(l)
                 continue
 
@@ -686,10 +712,6 @@ def generate_python_runtime_class(g, runtime_class, type_mappings):
         def __new__(cls):
             return activate_instance(cls)
     """
-    # XXX Missing statics
-    # [static(Windows.Devices.WiFiDirect.IWiFiDirectDeviceStatics, Windows.Foundation.UniversalApiContract, 1.0)]
-    # [static(Windows.Devices.WiFiDirect.IWiFiDirectDeviceStatics2, Windows.Foundation.UniversalApiContract, 1.0)]
-
     type_name = convert_type_name(runtime_class["name"], type_mappings)
     default_interface = runtime_class.get("default", None)
     if (default_interface is None):
@@ -863,7 +885,7 @@ def generate_python_interface(g, interface, type_mappings, generate_header, gene
 
     if (generate_header):
         g.append("IID_%s = comtypes.GUID('{%s}')", interface["name"], interface["uuid"])
-        g.append("class %s(%s):", interface["name"], interface["parent"])
+        g.append("class %s(%s):", interface["name"], convert_type_name(interface["parent"], type_mappings))
 
         g.push_indent()
         g.append(['"""'] + interface["lines"] + ['"""'])
@@ -871,8 +893,6 @@ def generate_python_interface(g, interface, type_mappings, generate_header, gene
         #g.append("_case_insensitive_ = True")
         #g.append("_idlflags_ = []")
         g.append("_iid_ = IID_%s", interface["name"])
-        typed_event_handler_names = []
-        async_event_handler_names = []
         for method in interface.get("methods", []):
             is_async_operation_handler = (
                 (method["flag"] == "propput") and 
@@ -929,7 +949,6 @@ def generate_python_interface(g, interface, type_mappings, generate_header, gene
                     .replace("IAsyncOperation_1_WiFiDirectDevice", interface["name"])
                     .replace("Completed", method["name"])
                 )
-                async_event_handler_names.append(typed_event_handler_name)
 
             else:
                 # Convert to type name, but remove the pointer
@@ -984,43 +1003,24 @@ def generate_python_interface(g, interface, type_mappings, generate_header, gene
                     .replace("StatusChanged", method["name"])
                     
                 )
-                typed_event_handler_names.append(typed_event_handler_name)
 
         # Write the methods once the class has been defined so parameters can refer
         # to the class if necessary
         g.pop_indent()
 
-        # XXX This should check for duplicates?
-        for typed_event_handler_name in typed_event_handler_names:
-            g.append("""
-                class TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs(comtypes.IUnknown):
-                    _iid_ = IID_TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs if ("IID_TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs" in globals()) else IID_ITypedEventHandler 
-
-                """.replace("TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs", typed_event_handler_name)
-            )
-        for async_event_handler_name in async_event_handler_names:
-            g.append("""
-                class IAsyncOperationCompletedHandler_1_WiFiDirectDevice(comtypes.IUnknown):
-                    _iid_ = IID_IAsyncOperationCompletedHandler_1_WiFiDirectDevice if ("IID_IAsyncOperationCompletedHandler_1_WiFiDirectDevice" in globals()) else IID_IAsyncEventHandler 
-
-                """.replace("IAsyncOperationCompletedHandler_1_WiFiDirectDevice", async_event_handler_name)
-            )
-
-
+    # XXX Note comtypes needs a _methods_ class variable even if it's empty or
+    #     things fail if emtpy _methods_ are removed, investigate?
     if (generate_methods):
         g.append("%s._methods_ = [" % interface["name"])
         g.push_indent()
 
-        event_methods = []
         for method in interface.get("methods", []):
             is_async_operation_handler = (
                 (method["flag"] == "propput") and 
                 (len(method["params"]) > 0) and 
                 method["params"][0]["type"].startswith("IAsyncOperationCompletedHandler")
             )
-            if ((method["flag"] == "eventadd") or is_async_operation_handler):
-                event_methods.append(method)
-
+            
             method_name = method["name"] 
             if (method["flag"] == "eventadd"):
                 method_name = "add_" + method_name
@@ -1058,72 +1058,36 @@ def generate_python_interface(g, interface, type_mappings, generate_header, gene
 
         g.pop_indent()
         g.append("]")
-        g.append("")
-
-        for method in event_methods:
-            # XXX This assumes it's a typedeventhandler
-            typed_event_handler_name = convert_type_name(method["params"][0]["type"], type_mappings).split("(")[1].split(")")[0]
-            l = typed_event_handler_name.split("_")
-            # Typed events handlers have 4, completed handlers have 3
-            if (len(l) == 4):
-                first_arg_type = l[2]
-                # XXX This puts POINTER in the comment prototype, fix 
-                second_arg_type = "wintypes.POINTER(%s)" % l[3]
-                
-                
-            else:
-                first_arg_type = interface["name"]
-                second_arg_type = "AsyncStatus"
-                
-            g.append("""
-                event_handler_class._methods_ = [
-                    # HRESULT Invoke([in] sender_class *sender, [in] args_class *args)
-                    comtypes.COMMETHOD(
-                        [''], wintypes.HRESULT, "Invoke", 
-                        (['in'], wintypes.POINTER(sender_class)),
-                        (['in'], args_class),
-                    ),
-                ]
-                """.replace("event_handler_class", typed_event_handler_name)
-                    .replace("sender_class", first_arg_type)
-                    .replace("args_class", second_arg_type)
-            )
 
     g.append("")
 
 
-def write_python(objs, filepath, type_mappings):
-    with open(filepath, "w") as f:
-        g = CodeGen(f)
-        g.append("# Autogenerated %s %s", os.path.basename(filepath), datetime.datetime.now())
-        g.append("from wrtcommon import *")
-        g.append("")
-        
-        for obj in objs.itervalues():
-            if (obj["type"] == "enum"):
-                g.reset_indent()
-                generate_python_enum(g, obj)
-        
-        # Declare interfaces first, then runtimeclasses then methods as a 
-        # way of "forward" the interface declaration so they can be used in the
-        # runtime classes and the runtime classes and the interfaces in the
-        # methods
+def generate_python(g, objs, type_mappings):
+    for obj in objs.itervalues():
+        if (obj["type"] == "enum"):
+            g.reset_indent()
+            generate_python_enum(g, obj)
+    
+    # Declare interfaces first, then runtimeclasses then methods as a 
+    # way of "forward" the interface declaration so they can be used in the
+    # runtime classes and the runtime classes and the interfaces in the
+    # methods
 
-        for obj in objs.itervalues():
-            if (obj["type"] == "interface"):
-                g.reset_indent()
-                generate_python_interface(g, obj, type_mappings, True, False)
+    for obj in objs.itervalues():
+        if (obj["type"] == "interface"):
+            g.reset_indent()
+            generate_python_interface(g, obj, type_mappings, True, False)
 
-        for obj in objs.itervalues():
-            if (obj["type"] == "runtimeclass"):
-                g.reset_indent()
-                generate_python_runtime_class(g, obj, type_mappings)
+    for obj in objs.itervalues():
+        if (obj["type"] == "runtimeclass"):
+            g.reset_indent()
+            generate_python_runtime_class(g, obj, type_mappings)
 
-        for obj in objs.itervalues():
-            if (obj["type"] == "interface"):
-                g.reset_indent()
-                generate_python_interface(g, obj, type_mappings, False, True)
-        
+    for obj in objs.itervalues():
+        if (obj["type"] == "interface"):
+            g.reset_indent()
+            generate_python_interface(g, obj, type_mappings, False, True)
+    
 
 def write_python_from_idls():
     type_mappings = {
@@ -1136,29 +1100,64 @@ def write_python_from_idls():
         "INT64" : "wintypes.LARGE_INTEGER",
         "HRESULT" : "wintypes.HRESULT",
         "boolean" : "wintypes.BOOL",
+        "IID" : "comtypes.IID",
+        "ULONG" : "wintypes.ULONG",
+        "IUnknown" : "comtypes.IUnknown",
     }
 
-    for filename in [
+    for filenames in [
         #"simple.idl",
-        "windows.foundation.collections.idl",
+        ["wrtbase.idl"],
+        #"windows.foundation.collections.idl",
         # XXX Necessary for PasswordCredential Gives error, investigate
-        "windows.security.credentials.idl",
-        "windows.devices.wifidirect.idl",
-        "windows.devices.enumeration.idl",
+        #"windows.security.credentials.idl",
+        ["windows.devices.wifidirect.idl", "wifidirect.hacks.idl"],
+        #"windows.devices.enumeration.idl",
         #"windows.foundation.idl",
         # XXX This needs empty line and comment support between methods
         # "asyncinfo.idl",
         ] :
-        
-        filepath = os.path.join("_out", "idls", filename)
-        print "parsing %r" % filepath
-        entries = parse_idl_file(filepath)
-        with open(os.path.join("_out", "idls", os.path.splitext(filename)[0] + ".json"), "w") as f:
-            json.dump(entries, f, indent=2, sort_keys=True)
-            json.dump(type_mappings, f, indent=2, sort_keys=True)
+        all_entries = {}
+        for filename in filenames:
+            filepath = filename
+            print "parsing %r" % filepath
+            entries = parse_idl_file(filepath)
+            with open(os.path.join("_out", "idls", os.path.splitext(filename)[0] + ".json"), "w") as f:
+                json.dump(entries, f, indent=2, sort_keys=True)
+                json.dump(type_mappings, f, indent=2, sort_keys=True)
 
+            all_entries.update(entries)
+
+        entries = all_entries
+        filename = filenames[0]
         filepath = os.path.join("_out", os.path.splitext(filename)[0] + ".py")
-        write_python(entries, filepath, type_mappings)
+        #filepath = os.path.splitext(filename)[0] + ".py"
+        with open(filepath, "w") as f:
+            g = CodeGen(f)
+            g.append("# Autogenerated from %s on %s", string.join(filenames, ", "), datetime.datetime.now())
+            
+            if (filename == "wrtbase.idl"):
+                # Don't import wrtcommon since the only thing wrtbase needs is
+                # HSTRING and ENUM. This removes a circular dependency between
+                # wrtcommon and wrtbase that is not a problem if the imports are
+                # placed carefully, but it's not clean
+                g.append("""
+                from ctypes import wintypes
+                import comtypes
+
+                HSTRING = wintypes.HANDLE
+                ENUM = wintypes.UINT
+                """)
+                # Make sure IInspectable and its dependency are generated first
+                generate_python(g, {"TrustLevel" : entries["TrustLevel"], "IInspectable" : entries["IInspectable"]}, type_mappings)
+                del entries["IInspectable"]
+                del entries["TrustLevel"]
+
+            else:
+                g.append("from wrtcommon import *")
+                g.append("")
+
+            generate_python(g, entries, type_mappings)
 
 def clr_test():
     # XXX This test gives errors, the winrt dlls are not managed dlls so trying
@@ -1590,10 +1589,14 @@ def winrt_wifi():
     logger.info("RoInitialize %r", hex(hr))
 
     connected_devices = {}
-    connection_listener = None
+    # Python 2.7 doesn't have nonlocal to allow nested functions overwriting
+    # outer scope variables, use a member variable inside a class instead of a
+    # straight object
+    # See https://stackoverflow.com/questions/8447947/is-it-possible-to-modify-a-variable-in-python-that-is-in-an-outer-enclosing-b
+    class nonlocal: pass
+    nonlocal.connection_listener = None
 
     def on_publisher_status_changed(sender, args):
-        global connection_listener 
         #type:(IWiFiDirectAdvertisementPublisher, IWiFiDirectAdvertisementPublisherStatusChangedEventArgs) -> comtypes.HRESULT
         logger.info("sender %r args %s", sender, args)
         # XXX Fix the wrapper so it returns the ENUM value directly
@@ -1602,8 +1605,7 @@ def winrt_wifi():
         
         elif (args.Status.value == WiFiDirectAdvertisementPublisherStatus.Started):
             logger.info("Started")
-            # XXX Missing stopping connection_listener on stopped/abort/exception?
-            connection_listener = start_listener()
+            nonlocal.connection_listener = start_listener()
 
         elif (args.Status.value == WiFiDirectAdvertisementPublisherStatus.Stopped):
             logger.info("Stopped")
@@ -1716,19 +1718,19 @@ def winrt_wifi():
     def start_listener():
         logger.info("")
         # hr = Windows::Foundation::ActivateInstance(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectConnectionListener).Get(), &_connectionListener);
-        connection_listener = WiFiDirectConnectionListener()
+        listener = WiFiDirectConnectionListener()
         # hr = _connectionListener->add_ConnectionRequested(
         #   Callback<ConnectionRequestedHandler>([this](IWiFiDirectConnectionListener* sender, IWiFiDirectConnectionRequestedEventArgs* args) -> HRESULT
-        connection_listener.OnConnectionRequested = on_connection_requested
+        listener.OnConnectionRequested = on_connection_requested
 
         # Local variable going out of scope will call __del__ and cause Release(),
         # AddRef to counter that
         # XXX Is there a way so comtypes doesn't Release local variables when they
         #     are returned from the function? Does this also happen if local var is
         #     set to None? (can't do here since it's the return value, though)
-        connection_listener.AddRef()
+        listener.AddRef()
 
-        return connection_listener
+        return listener
 
     # hr = Windows::Foundation::ActivateInstance(HStringReference(RuntimeClass_Windows_Devices_WiFiDirect_WiFiDirectAdvertisementPublisher).Get(), &_publisher);
     publisher = WiFiDirectAdvertisementPublisher()
@@ -1773,6 +1775,13 @@ def winrt_wifi():
     # hr = _publisher->Start();
     # This causes a QueryInterface for ITypedEventHandler {DE73CBA7-370D-550C-B23A-53DD0B4E480D}
     # on AsyncOperationHandler
+    # This asks for
+    # - INoMarshall {ECC8691B-C1DB-4DC0-855E-65F6C551AF49}, should E_NOINTERFACE
+    # - ??????      {00000039-0000-0000-C000-000000000046}, should E_NOINTERFACE
+    # - IdentityUnmarshal {0000001B-0000-0000-C000-000000000046}, should E_NOINTERFACE
+    # - IAgileObject {94EA2B94-E9CC-49E0-C0FF-EE64CA8F5B90}, should S_OK
+    # And once publisher.Start() is called it asks for
+    # - ITypedEventHandler {DE73CBA7-370D-550C-B23A-53DD0B4E480D}
     publisher.Start()
     logger.info("Started publisher")
 
@@ -1790,8 +1799,10 @@ def winrt_wifi():
         #     handlers to None explicitly for cleanliness? (right now __del__
         #     may be called eg after the logger has been torn down so any
         #     logging there fails with None accesses)
-        if (connection_listener is not None):
-            connection_listener.OnConnectionRequested = None
+        if (nonlocal.connection_listener is not None):
+            logger.info("Resetting OnConnectionRequested")
+            nonlocal.connection_listener.OnConnectionRequested = None
+        logger.info("Resetting OnStatusChanged")
         publisher.OnStatusChanged = None
             
         logger.info("Done")
@@ -1799,11 +1810,19 @@ def winrt_wifi():
     
 if (__name__ == "__main__"):
     log_level = logging.WARNING
-    #log_level = logging.INFO
+    #log_level = logging.DEBUG
 
     comtypes_logger.setLevel(log_level)
     wrtc_logger.setLevel(log_level)
     logger.setLevel(log_level)
-    #write_python_from_idls()
-    winrt_wifi()
+    
+    if ((len(sys.argv) > 1) and ("build" in sys.argv[1])):
+        # Note there's no import wrtcommon or import wrtbase in the code
+        # generation path, which avoids dependencies on files that haven't been
+        # generated yet (wrtcommon.py depends on wrtbase.py which is generated
+        # from wrtbase.idl in the code generation path)
+        write_python_from_idls()
+
+    else:
+        winrt_wifi()
 

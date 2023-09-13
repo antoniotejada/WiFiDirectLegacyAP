@@ -489,14 +489,3 @@ namespace Windows
         }
     }
 }
-
-
-// XXX Entry manually added
-[contract(Windows.Foundation.UniversalApiContract, 1.0)]
-[uuid(DAD01B61-A82D-566C-BA82-224C11500669)]
-interface IAsyncOperation_1_WiFiDirectDevice : IInspectable
-{
-    [propput] HRESULT Completed([in] IAsyncOperationCompletedHandler<Windows.Devices.WiFiDirect.WiFiDirectDevice*>* handler);
-    [propget] HRESULT Completed([out] [retval] IAsyncOperationCompletedHandler<Windows.Devices.WiFiDirect.WiFiDirectDevice*>** handler);
-    HRESULT GetResults([out] [retval] Windows.Devices.WiFiDirect.IWiFiDirectDevice** results);
-}

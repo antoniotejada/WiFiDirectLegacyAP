@@ -1,0 +1,278 @@
+//
+// File with additional interfaces needed for windows.devices.wifidirect.idl
+// that are either in some .idl files that are too complex to be parsed
+// (templates, etc) or in some .h file instead of an .idl file
+//
+
+namespace Windows
+{
+    namespace Security
+    {
+        namespace Credentials
+        {
+        
+// XXX From windows.security.credentials.idl
+
+// Needs proper namespace so activate_instance calls with the full qualified
+// name (but note that this instance is only activated by mistake, see below)
+[exclusiveto(Windows.Security.Credentials.PasswordCredential)]
+[uuid(6AB18989-C720-41A7-A6C1-FEADB36329A0)]
+// XXX Letting PasswordCredential = class(IPasswordCredential) fails,
+//     investigate and fix (maybe doing activate_instance on __new__ is
+//     overwriting?) One of the problems is that a function returns a pointer to
+//     passwordcredential but because it's activatable new is called on it when
+//     it shouldn't and gives the error
+//
+// ctypes.ArgumentError: argument 1: <type 'exceptions.TypeError'>: expected LP_POINTER(PasswordCredential) instance instead of POINTER(IPasswordCredential)
+//
+//    For now the workaround is to remove the activatable flag from the runtimeclass
+interface IPasswordCredential : IInspectable
+{
+    [propget] HRESULT Resource([out] [retval] HSTRING* resource);
+    [propput] HRESULT Resource([in] HSTRING resource);
+    [propget] HRESULT UserName([out] [retval] HSTRING* userName);
+    [propput] HRESULT UserName([in] HSTRING userName);
+    [propget] HRESULT Password([out] [retval] HSTRING* password);
+    [propput] HRESULT Password([in] HSTRING password);
+    HRESULT RetrievePassword();
+    [propget] HRESULT Properties([out] [retval] Windows.Foundation.Collections.IPropertySet** props);
+}
+//[activatable(0x06020000)]
+//[activatable(Windows.Security.Credentials.ICredentialFactory, 0x06020000)]
+runtimeclass PasswordCredential
+{
+    [default] interface Windows.Security.Credentials.IPasswordCredential;
+}
+
+        }
+    }
+}
+
+
+// XXX From windows.devices.enumeration.idl
+[exclusiveto(Windows.Devices.Enumeration.DeviceInformation)]
+[uuid(ABA0FB95-4398-489D-8E44-E6130927011F)]
+interface IDeviceInformation : IInspectable
+{
+    [propget] HRESULT Id([out] [retval] HSTRING* value);
+    [propget] HRESULT Name([out] [retval] HSTRING* value);
+    [propget] HRESULT IsEnabled([out] [retval] boolean* value);
+    [propget] HRESULT IsDefault([out] [retval] boolean* value);
+    [propget] HRESULT EnclosureLocation([out] [retval] Windows.Devices.Enumeration.EnclosureLocation** value);
+    [propget] HRESULT Properties([out] [retval] Windows.Foundation.Collections.IMapView<HSTRING, IInspectable*>** value);
+    HRESULT Update([in] Windows.Devices.Enumeration.DeviceInformationUpdate* updateInfo);
+    HRESULT GetThumbnailAsync([out] [retval] Windows.Foundation.IAsyncOperation<Windows.Devices.Enumeration.DeviceThumbnail*>** asyncOp);
+    HRESULT GetGlyphThumbnailAsync([out] [retval] Windows.Foundation.IAsyncOperation<Windows.Devices.Enumeration.DeviceThumbnail*>** asyncOp);
+}
+
+// XXX These bring unsupported interfaces, ignore them
+// [static(Windows.Devices.Enumeration.IDeviceInformationStatics, Windows.Foundation.UniversalApiContract, 1.0)]
+// [static(Windows.Devices.Enumeration.IDeviceInformationStatics2, Windows.Foundation.UniversalApiContract, 1.0)]
+runtimeclass DeviceInformation
+{
+    [default] interface Windows.Devices.Enumeration.IDeviceInformation;
+}
+
+enum DevicePairingKinds
+{
+    None            = 0x0,
+    ConfirmOnly     = 0x1,
+    DisplayPin      = 0x2,
+    ProvidePin      = 0x4,
+    ConfirmPinMatch = 0x8
+};
+
+
+// XXX Placeholders
+
+// In windows.foundation.py, but needs multi interface runtimeclass support,
+// needed for PasswordCredential
+[uuid(8A43ED9F-F4E6-4421-ACF9-1DAB2986820C)]
+interface IPropertySet : IInspectable 
+{
+}
+
+// XXX Placeholders needed for IDeviceInformation
+[
+    contract(Windows.Foundation.FoundationContract, 1.0),
+    uuid(e480ce40-a338-4ada-adcf-272272e48cb9)
+]
+interface IMapView_2_HSTRING_IInspectable : IInspectable
+{
+}
+
+[uuid(2680336571, 58438, 17634, 170, 97, 156, 171, 143, 99, 106, 242)]
+interface IAsyncOperation_1_DeviceThumbnail : IInspectable
+{
+}
+
+[uuid(42340A27-5810-459C-AABB-C65E1F813ECF)]
+interface EnclosureLocation : IInspectable
+{
+}
+
+[contract(Windows.Foundation.UniversalApiContract, 1.0)]
+[exclusiveto(Windows.Devices.Enumeration.DeviceInformationUpdate)]
+[uuid(8F315305-D972-44B7-A37E-9E822C78213B)]
+interface DeviceInformationUpdate : IInspectable
+{
+}
+
+[
+    contract(Windows.Foundation.FoundationContract, 1.0),
+    uuid(913337e9-11a1-4345-a3a2-4e7f956e222d)
+]
+interface IVector_1_WiFiDirectInformationElement : IInspectable
+{
+}
+
+[
+    contract(Windows.Foundation.FoundationContract, 1.0),
+    uuid(913337e9-11a1-4345-a3a2-4e7f956e222d)
+]
+interface IVector_1_WiFiDirectConfigurationMethod : IInspectable
+{
+}
+[
+    contract(Windows.Foundation.FoundationContract, 1.0),
+    uuid(bbe1fa4c-b0e3-4583-baef-1f1b2e483e56)
+]
+interface IVectorView_1_EndpointPair : IInspectable
+{
+}
+
+// https://github.com/tpn/winsdk-10/blob/master/Include/10.0.14393.0/winrt/windows.storage.streams.idl
+[uuid(905A0FE0-BC53-11DF-8C49-001E4FC686DA)]
+[version(0x06020000)]
+interface IBuffer : IInspectable
+{
+    [propget] HRESULT Capacity([out] [retval] UINT32* value);
+    [propget] HRESULT Length([out] [retval] UINT32* value);
+    [propput] HRESULT Length([in] UINT32 value);
+}
+
+// https://learn.microsoft.com/en-us/previous-versions/br205803(v=vs.85)
+// MIDL_INTERFACE("d34abe17-fb19-57be-bc41-0eb83dea151c")
+// __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice : public IUnknown
+// {
+// public:
+//     virtual HRESULT STDMETHODCALLTYPE Invoke( 
+//         /* [in] */ __RPC__in_opt __FIAsyncOperation_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice *asyncInfo,
+//         /* [in] */ AsyncStatus status) = 0;
+//     
+// };
+// FWiFiDirectDevice_AsyncStatus = ctypes.PYFUNCTYPE(wintypes.HRESULT, wintypes.POINTER("WiFiDirectDevice"), wintypes.POINTER("AsyncStatus"))
+// IID_IAsyncOperationCompletedHandler_1_WiFiDirectDevice = comtypes.GUID("{d34abe17-fb19-57be-bc41-0eb83dea151c}")
+[uuid(d34abe17-fb19-57be-bc41-0eb83dea151c)]
+interface IAsyncOperationCompletedHandler_1_WiFiDirectDevice : IUnknown
+{
+    HRESULT Invoke([in] IAsyncOperation_1_WiFiDirectDevice *asyncInfo, [in] AsyncStatus status);
+}
+
+// https://learn.microsoft.com/en-us/previous-versions/br205802(v=vs.85)
+// 
+// MIDL_INTERFACE("dad01b61-a82d-566c-ba82-224c11500669")
+// __FIAsyncOperation_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice : public IInspectable
+// {
+// public:
+//     virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Completed( 
+//         /* [in] */ __RPC__in_opt __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice *handler) = 0;
+//     
+//     virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Completed( 
+//         /* [retval][out] */ __RPC__deref_out_opt __FIAsyncOperationCompletedHandler_1_Windows__CDevices__CWiFiDirect__CWiFiDirectDevice **handler) = 0;
+//     
+//     virtual HRESULT STDMETHODCALLTYPE GetResults( 
+//         /* [retval][out] */ __RPC__deref_out_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectDevice **results) = 0;
+//     
+// };
+[contract(Windows.Foundation.UniversalApiContract, 1.0)]
+[uuid(DAD01B61-A82D-566C-BA82-224C11500669)]
+interface IAsyncOperation_1_WiFiDirectDevice : IInspectable
+{
+    [propput] HRESULT Completed([in] IAsyncOperationCompletedHandler<Windows.Devices.WiFiDirect.WiFiDirectDevice*>* handler);
+    [propget] HRESULT Completed([out] [retval] IAsyncOperationCompletedHandler<Windows.Devices.WiFiDirect.WiFiDirectDevice*>** handler);
+    HRESULT GetResults([out] [retval] Windows.Devices.WiFiDirect.IWiFiDirectDevice** results);
+}
+
+// XXX This GUID is queryinterfaced but only appears on the .h?
+//     https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.h
+// MIDL_INTERFACE("de73cba7-370d-550c-b23a-53dd0b4e480d")
+// __FITypedEventHandler_2_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisher_Windows__CDevices__CWiFiDirect__CWiFiDirectAdvertisementPublisherStatusChangedEventArgs : public IUnknown
+// {
+// public:
+//     virtual HRESULT STDMETHODCALLTYPE Invoke( 
+//         /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisher *sender,
+//         /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisherStatusChangedEventArgs *e) = 0;
+//     
+// };
+// 
+// template <>
+// struct __declspec(uuid("de73cba7-370d-550c-b23a-53dd0b4e480d"))
+// ITypedEventHandler<ABI::Windows::Devices::WiFiDirect::WiFiDirectAdvertisementPublisher*,ABI::Windows::Devices::WiFiDirect::WiFiDirectAdvertisementPublisherStatusChangedEventArgs*> : ITypedEventHandler_impl<ABI::Windows::Foundation::Internal::AggregateType<ABI::Windows::Devices::WiFiDirect::WiFiDirectAdvertisementPublisher*, ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisher*>,ABI::Windows::Foundation::Internal::AggregateType<ABI::Windows::Devices::WiFiDirect::WiFiDirectAdvertisementPublisherStatusChangedEventArgs*, ABI::Windows::Devices::WiFiDirect::IWiFiDirectAdvertisementPublisherStatusChangedEventArgs*>> 
+// {
+//     static const wchar_t* z_get_rc_name_impl() 
+//     {
+//         return L"Windows.Foundation.TypedEventHandler`2<Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisher, Windows.Devices.WiFiDirect.WiFiDirectAdvertisementPublisherStatusChangedEventArgs>"; 
+//     }
+// };
+// # https://learn.microsoft.com/en-us/previous-versions/hh438424(v=vs.85)
+// FWiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs = ctypes.PYFUNCTYPE(wintypes.HRESULT, wintypes.POINTER("IWiFiDirectAdvertisementPublisher"), wintypes.POINTER("IIWiFiDirectAdvertisementPublisherStatusChangedEventArgs"))
+// IID_TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs = comtypes.GUID("{DE73CBA7-370D-550C-B23A-53DD0B4E480D}")
+[uuid(de73cba7-370d-550c-b23a-53dd0b4e480d)]
+interface TypedEventHandler_2_WiFiDirectAdvertisementPublisher_WiFiDirectAdvertisementPublisherStatusChangedEventArgs : IUnknown
+{
+    HRESULT Invoke([in] WiFiDirectAdvertisementPublisher *sender, [in] WiFiDirectAdvertisementPublisherStatusChangedEventArgs *args);
+}
+
+// XXX This GUID is queryinterfaced but only appears on the .h?
+//     https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.h
+// 
+// MIDL_INTERFACE("d04b0403-1fe2-532f-8e47-4823a14e624f")
+// __FITypedEventHandler_2_Windows__CDevices__CWiFiDirect__CWiFiDirectConnectionListener_Windows__CDevices__CWiFiDirect__CWiFiDirectConnectionRequestedEventArgs : public IUnknown
+// {
+// public:
+//     virtual HRESULT STDMETHODCALLTYPE Invoke( 
+//         /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionListener *sender,
+//         /* [in] */ __RPC__in_opt ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionRequestedEventArgs *e) = 0;
+//     
+// };
+// 
+// template <>
+// struct __declspec(uuid("d04b0403-1fe2-532f-8e47-4823a14e624f"))
+// ITypedEventHandler<ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionListener*,ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionRequestedEventArgs*> : ITypedEventHandler_impl<ABI::Windows::Foundation::Internal::AggregateType<ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionListener*, ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionListener*>,ABI::Windows::Foundation::Internal::AggregateType<ABI::Windows::Devices::WiFiDirect::WiFiDirectConnectionRequestedEventArgs*, ABI::Windows::Devices::WiFiDirect::IWiFiDirectConnectionRequestedEventArgs*>> 
+// {
+//     static const wchar_t* z_get_rc_name_impl() 
+//     {
+//         return L"Windows.Foundation.TypedEventHandler`2<Windows.Devices.WiFiDirect.WiFiDirectConnectionListener, Windows.Devices.WiFiDirect.WiFiDirectConnectionRequestedEventArgs>"; 
+//     }
+// };
+// 
+// FWiFiDirectConnectionListener_WiFiDirectConnectionRequestedEventArgs = ctypes.PYFUNCTYPE(wintypes.HRESULT, wintypes.POINTER("IWiFiDirectConnectionListener"), wintypes.POINTER("IWiFiDirectConnectionRequestedEventArgs"))
+// IID_TypedEventHandler_2_WiFiDirectConnectionListener_WiFiDirectConnectionRequestedEventArgs = comtypes.GUID("{d04b0403-1fe2-532f-8e47-4823a14e624f}")
+[uuid(d04b0403-1fe2-532f-8e47-4823a14e624f)]
+interface TypedEventHandler_2_WiFiDirectConnectionListener_WiFiDirectConnectionRequestedEventArgs : IUnknown
+{
+    HRESULT Invoke([in] WiFiDirectConnectionListener *sender, [in] WiFiDirectConnectionRequestedEventArgs *args);
+}
+
+// XXX This GUID is queryinterfaced but only appears on the .h?
+//     https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/windows.devices.wifidirect.h
+// 
+// template <>
+// struct __declspec(uuid("9208929a-2a3c-50ad-aa08-a0a986edbabe"))
+// ITypedEventHandler<ABI::Windows::Devices::WiFiDirect::WiFiDirectDevice*,IInspectable*> : ITypedEventHandler_impl<ABI::Windows::Foundation::Internal::AggregateType<ABI::Windows::Devices::WiFiDirect::WiFiDirectDevice*, ABI::Windows::Devices::WiFiDirect::IWiFiDirectDevice*>,IInspectable*> 
+// {
+//     static const wchar_t* z_get_rc_name_impl() 
+//     {
+//         return L"Windows.Foundation.TypedEventHandler`2<Windows.Devices.WiFiDirect.WiFiDirectDevice, Object>"; 
+//     }
+// };
+// 
+// 
+// FWiFiDirectDevice_IInspectable = ctypes.PYFUNCTYPE(wintypes.HRESULT, wintypes.POINTER("IWiFiDirectDevice"), wintypes.POINTER("IIInspectable"))
+// IID_TypedEventHandler_2_WiFiDirectDevice_IInspectable = comtypes.GUID("{9208929A-2A3C-50AD-AA08-A0A986EDBABE}")
+[uuid(9208929a-2a3c-50ad-aa08-a0a986edbabe)]
+interface TypedEventHandler_2_WiFiDirectDevice_IInspectable : IUnknown
+{
+    HRESULT Invoke([in] WiFiDirectDevice *sender, [in] IInspectable *args);
+}

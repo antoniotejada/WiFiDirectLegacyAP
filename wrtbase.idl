@@ -1,0 +1,75 @@
+// There's an inspectable.idl
+// https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/inspectable.idl
+// but the format is a mixture of C and idl, so define it here in plain idl
+enum TrustLevel
+{
+    BaseTrust    = 0,
+    PartialTrust = 1,
+    FullTrust    = 2
+};
+[
+object,
+uuid(AF86E2E0-B12D-4c6a-9C5A-D7AA65101E90),
+pointer_default(unique)
+]
+interface IInspectable : IUnknown
+{
+    HRESULT GetIids([out] ULONG *iidCount, [out] IID **iids);
+    HRESULT GetRuntimeClassName( [out] HSTRING *className);
+    HRESULT GetTrustLevel([out] TrustLevel *trustLevel);
+}
+
+// https://learn.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
+// This is a marker-only interface, it doesn't have methods
+[
+    object,
+    uuid(94EA2B94-E9CC-49E0-C0FF-EE64CA8F5B90),
+    pointer_default(unique)
+]
+interface IAgileObject : IUnknown
+{
+}
+
+// https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/AsyncInfo.idl
+// https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/winrt/asyncinfo.h
+enum AsyncStatus
+{
+    Started = 0,
+    Completed = 1,
+    Canceled = 2,
+    Error = 3
+};
+
+[
+    object,
+    uuid(00000036-0000-0000-C000-000000000046),
+    pointer_default(unique)
+]
+interface IAsyncInfo : IInspectable
+{
+    [propget] HRESULT Id([out, retval] UINT32 *id);
+    [propget] HRESULT Status([out, retval] AsyncStatus *status);
+    [propget] HRESULT ErrorCode([out,retval] HRESULT *errorCode);
+    HRESULT Cancel();
+    HRESULT Close();
+}
+
+// https://learn.microsoft.com/en-us/uwp/api/windows.foundation.iasyncoperation-1?view=winrt-22621
+[
+    object,
+    uuid(2680336571, 58438, 17634, 170, 97, 156, 171, 143, 99, 106, 242)
+    pointer_default(unique)
+]
+interface IAsyncOperation : IAsyncInfo
+{
+}
+
+// https://learn.microsoft.com/en-us/uwp/api/windows.foundation.typedeventhandler-2?view=winrt-22621
+// [Windows.Foundation.Metadata.ContractVersion(Windows.Foundation.FoundationContract, 65536)]
+// [Windows.Foundation.Metadata.Guid(2648818996, 27361, 4576, 132, 225, 24, 169, 5, 188, 197, 63)]
+// template <typename TSender, typename TResult> class TypedEventHandler : MulticastDelegate
+[uuid(2648818996, 27361, 4576, 132, 225, 24, 169, 5, 188, 197, 63)]
+interface ITypedEventHandler : IUnknown
+{
+    HRESULT Invoke([in] IInspectable *sender, [in] IInspectable *args);
+}
